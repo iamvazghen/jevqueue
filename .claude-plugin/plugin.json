@@ -33,8 +33,7 @@
     "mode": {
       "type": "string",
       "title": "Mode",
-      "description": "enforce refuses a tool call the decision layer says should not run. advisory reports the same verdicts but never blocks.",
-      "options": ["enforce", "advisory"],
+      "description": "enforce refuses a tool call the decision layer says should not run. advisory reports the same verdicts but never blocks. Defaults to enforce.",
       "default": "enforce"
     },
     "confidence_floor": {
