@@ -33,6 +33,18 @@ is deleted only when the plugin is uninstalled. That is where the virtualenv goe
    `Scripts\python.exe` in place of `bin/python` and `Scripts\pip.exe` in place of
    `bin/pip`. Run the commands with the right one for the platform rather than guessing.
 
+   **If that install fails**, the decision layer may not be on PyPI yet. Install it from
+   source instead — it is the same package, and it is the version this plugin is developed
+   against:
+
+   ```bash
+   "${CLAUDE_PLUGIN_DATA}/venv/bin/python" -m pip install \
+     "jev-governor @ git+https://github.com/iamvazghen/jev-governor.git"
+   ```
+
+   Install from source rather than from PyPI if the PyPI install fails. Report which one you
+   used.
+
 3. Confirm it worked:
 
    ```bash
