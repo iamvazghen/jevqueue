@@ -25,21 +25,22 @@ is deleted only when the plugin is uninstalled. That is where the virtualenv goe
 
    ```bash
    python -m venv "${CLAUDE_PLUGIN_DATA}/venv"
-   "${CLAUDE_PLUGIN_DATA}/venv/bin/python" -m pip install --upgrade pip
-   "${CLAUDE_PLUGIN_DATA}/venv/bin/python" -m pip install jev-governor
+   "${CLAUDE_PLUGIN_DATA}/venv/bin/python" -m pip install "jev-governor==0.2.0"
    ```
 
    On Windows the interpreter is `${CLAUDE_PLUGIN_DATA}\venv\Scripts\python.exe`; use
    `Scripts\python.exe` in place of `bin/python` and `Scripts\pip.exe` in place of
    `bin/pip`. Run the commands with the right one for the platform rather than guessing.
 
-   **If that install fails**, the decision layer may not be on PyPI yet. Install it from
-   source instead — it is the same package, and it is the version this plugin is developed
-   against:
+   The version is pinned deliberately. An unpinned install means the plugin's behaviour can
+   change underneath a user's feet without the plugin changing at all.
+
+   **If that install fails**, the decision layer may not be on PyPI yet. Install the same
+   pinned version from source instead:
 
    ```bash
    "${CLAUDE_PLUGIN_DATA}/venv/bin/python" -m pip install \
-     "jev-governor @ git+https://github.com/iamvazghen/jev-governor.git"
+     "jev-governor @ git+https://github.com/iamvazghen/jev-governor.git@v0.2.0"
    ```
 
    Install from source rather than from PyPI if the PyPI install fails. Report which one you

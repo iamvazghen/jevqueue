@@ -14,3 +14,7 @@ htmlcov/
 .env
 .env.*
 !.env.example
+
+# Runtime state written by tooling that runs with this directory as its working directory.
+# It can contain machine identity keys, so it must never be committed.
+.concord/

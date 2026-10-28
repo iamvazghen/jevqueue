@@ -25,31 +25,76 @@ jevqueue moves the decision out of that pass and gives it a place to be enforced
 
 ## Install
 
-**Claude Code** — from a marketplace:
+### Claude Code
 
 ```bash
 claude plugin marketplace add iamvazghen/jevqueue
 claude plugin install jevqueue@jevqueue
 ```
 
-**Or from a clone**, for development:
+In one command, on Claude Code v2.1.292 or later:
 
 ```bash
-claude plugin marketplace add ./jevqueue
-claude plugin install jevqueue@jevqueue
+claude plugin install jevqueue --marketplace iamvazghen/jevqueue
 ```
 
-**Codex CLI** and other agent tools use the same repository with their own manifest — see
-[Other agents](#other-agents).
+Or from inside a session, on v2.1.275 or later:
 
-Then run the setup once, so the queue stops running on its fallback policy:
+```
+/plugin install jevqueue --marketplace iamvazghen/jevqueue
+```
+
+### Codex CLI
+
+```bash
+codex plugin marketplace add iamvazghen/jevqueue
+codex plugin add jevqueue@jevqueue
+```
+
+### Any agent that reads skills
+
+The two skills in `skills/` work in any agent that reads `SKILL.md` — Claude Code, Codex,
+Cursor, Windsurf, and anything else that follows the open skill format. Copy `skills/jevqueue`
+into your agent's skills directory and it works on its own, with no hooks and no setup.
+
+### Any MCP-capable agent
+
+```bash
+python mcp/jevqueue_mcp.py
+```
+
+Expose that to your agent as an MCP server and it gains one tool, `jevqueue_decide`, which
+answers the same question the hook answers.
+
+---
+
+## Set it up
+
+Installing the plugin is enough to get the fallback policy running. One more step puts the
+real decision layer behind it:
 
 ```
 /jevqueue:setup
 ```
 
-That installs the decision layer into the plugin's own environment. Nothing touches your
-system Python, your project, or your shell.
+That installs `jev-governor` into the plugin's own environment — pinned to an exact version,
+inside the plugin's data directory. Nothing touches your system Python, your project, or
+your shell.
+
+## Configure it
+
+The plugin's settings live in `/config` (Claude Code) or your agent's equivalent:
+
+| Setting | Meaning |
+|---|---|
+| **TypeSafe API key** | Optional. With it, decisions come from the hosted Jev model. Without it, the offline rules baseline. |
+| **Mode** | `enforce` refuses a step. `advisory` reports the same verdicts and never blocks. |
+| **Confidence floor** | Below this routing confidence the step is delegated rather than gated. |
+
+**The key is read from that setting and nowhere else.** Not from `TYPESAFE_API_KEY`, not from
+any environment variable. A plugin that quietly picks up a secret already sitting in your
+shell and ships it somewhere is doing something you did not agree to, and it makes the data
+handling impossible to reason about. See [PRIVACY.md](PRIVACY.md).
 
 ---
 
@@ -73,8 +118,8 @@ confidently `high` verdict stops the step and asks a human instead.
 ### The completion gate
 
 The most common real failure of an agent loop is an agent reporting success on work that
-never happened. It happens because the same model that decides to stop is the one claiming
-it finished. The decision layer asks the completion question **separately**, so the two
+never happened. It happens because the same model that decides to stop is the one claiming it
+finished. The decision layer asks the completion question **separately**, so the two
 judgments cannot see each other's answers, and when they disagree the stricter one wins and
 the work continues.
 
@@ -117,18 +162,6 @@ network. Both are honest about what they are; the fallback says so on every run.
 
 ---
 
-## Configuration
-
-`/config` shows the plugin's settings, which you set when the plugin was enabled:
-
-| Setting | Meaning |
-|---|---|
-| **TypeSafe API key** | Optional. With it, decisions come from the hosted model. Without it, the offline baseline. |
-| **Mode** | `enforce` refuses a step. `advisory` reports the same verdicts and never blocks. |
-| **Confidence floor** | Below this routing confidence the step is delegated rather than gated. |
-
----
-
 ## Using it by hand
 
 ```bash
@@ -142,21 +175,33 @@ the completion probability. It is the same call the hook makes.
 
 ---
 
+## What it runs, sends and fetches
+
+Short version: **two Python scripts on your machine, one bounded summary sent to a decision
+model if you configured a key, nothing fetched, one small cached file written.** The full
+detail, including exactly what is in the request, is in [PRIVACY.md](PRIVACY.md).
+
+The short version of the short version: the plugin makes **no network request at all** unless
+you have configured an API key, and when it does, the request goes to
+`https://api.typesafe.ai/v1/systemone` and nowhere else.
+
+---
+
 ## Other agents
 
-One repository, one engine, several runtimes. The manifests are per-tool, the engine is
+One repository, one engine, several runtimes. The manifests are per-tool; the engine is
 shared.
 
-| Agent | What it gets |
-|---|---|
-| **Claude Code** | `PreToolUse` hook, commands, skills — the full integration |
-| **Codex CLI** | `.codex-plugin/` — hooks, skills, and the shared engine |
-| **agents.md standard** | `.agents/plugins/marketplace.json` — the portable manifest |
-| **MCP-capable agents** | An MCP server exposing `jevqueue_decide`, for agents that cannot hook |
+| Agent | What it gets | Manifest |
+|---|---|---|
+| **Claude Code** | `PreToolUse` hook, commands, skills, settings | `.claude-plugin/` |
+| **Codex CLI** | hooks, skills, commands, interface metadata | `.codex-plugin/` |
+| **agents.md standard** | the portable manifest | `.agents/plugins/` |
+| **MCP-capable agents** | an MCP server exposing `jevqueue_decide` | `mcp/` |
+| **Skill-reading agents** | two portable skills | `skills/` |
 
-The portable pieces are the two skills (`jevqueue` and `jevqueue-adapter`) and the MCP
-server. The hook is the strong integration, and it is the only part that needs a runtime with
-hooks.
+The portable pieces are the skills and the MCP server. The hook is the strong integration, and
+it is the only part that needs a runtime with hooks.
 
 ---
 
@@ -170,13 +215,13 @@ hooks.
 - **It does not replace your model.** The generative model still writes the arguments and the
   prose. jevqueue decides whether the step runs; the model still does the work.
 
-And the honest limitation, stated up front: **a pre-tool hook cannot constrain the provider's
-tool choice**, because the provider is not ours to constrain from a hook. What it can do is
-refuse a step the decision layer says should not run, and escalate a risky one. If you need
-the stronger guarantee — the provider constrained to a named tool, and the result checked
-against it — that is the [decision layer](https://github.com/iamvazghen/jev-governor) itself,
-installed as a library in the agent you are building. Both are worth having; they are not the
-same thing.
+And the honest limitation, stated up front: **a pre-tool hook cannot constrain the
+provider's tool choice**, because the provider is not ours to constrain from a hook. What it
+can do is refuse a step the decision layer says should not run, and escalate a risky one. If
+you need the stronger guarantee — the provider constrained to a named tool, and the result
+checked against it — that is the [decision layer](https://github.com/iamvazghen/jev-governor)
+itself, installed as a library in the agent you are building. Both are worth having; they are
+not the same thing.
 
 ---
 
@@ -196,7 +241,9 @@ jevqueue/
 ├── mcp/jevqueue_mcp.py     the portable core as an MCP server
 ├── jevqueue/core.py        the engine
 ├── scripts/jevqueue.py     the command line
-└── bin/                    shims so `jevqueue` is on PATH
+├── bin/                    shims so `jevqueue` is on PATH
+├── assets/icon.png         the icon
+└── PRIVACY.md              what this plugin runs, sends and fetches
 ```
 
 ## Development
@@ -204,7 +251,7 @@ jevqueue/
 ```bash
 uv venv && uv pip install -e "..[dev]" pytest
 uv run pytest
-claude plugin validate .
+claude plugin validate --strict .
 ```
 
 The suite is offline by design: no network, no API key, no provider. A test that needs a
@@ -212,7 +259,8 @@ credential does not run, and one that does not run is decoration.
 
 ## License
 
-[MIT](LICENSE).
+[MIT](LICENSE). See [NOTICE](NOTICE) for attribution and [PRIVACY.md](PRIVACY.md) for data
+handling.
 
 `jevqueue` is an independent community project. It is not affiliated with, endorsed by, or
 supported by TypeSafe AI or Nous Research. **Jev** and **TypeSafe** are names of a separately

@@ -1,6 +1,6 @@
 {
   "name": "jevqueue",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A decision queue in front of your agent's tools. Before a tool runs, a decision model is asked whether it should, and the call is refused when the answer is no.",
   "author": {
     "name": "Vazghen Vardanian",
@@ -9,7 +9,6 @@
   "homepage": "https://github.com/iamvazghen/jevqueue",
   "repository": "https://github.com/iamvazghen/jevqueue",
   "license": "MIT",
-  "icon": "./assets/icon.png",
   "keywords": [
     "agent-governance",
     "agent-safety",
@@ -23,17 +22,19 @@
     "agents"
   ],
   "hooks": "./hooks/hooks.json",
+  "commands": "./commands/",
+  "skills": "./skills/",
   "userConfig": {
     "typesafe_api_key": {
       "type": "string",
       "title": "TypeSafe API key",
-      "description": "Optional. With it, decisions come from Jev, the hosted System One model. Without it, the queue runs the offline rules baseline, which needs no credential and no network.",
+      "description": "Optional. With it, decisions come from Jev, the hosted System One model. Without it, the queue runs the offline rules baseline, which needs no credential and no network. The key is read from this setting only -- it is never read from your environment.",
       "sensitive": true
     },
     "mode": {
       "type": "string",
       "title": "Mode",
-      "description": "enforce refuses a tool call the decision layer says should not run. advisory reports the same verdicts but never blocks. Defaults to enforce.",
+      "description": "enforce refuses a tool call the decision layer says should not run. advisory reports the same verdicts but never blocks.",
       "default": "enforce"
     },
     "confidence_floor": {

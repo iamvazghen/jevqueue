@@ -39,6 +39,17 @@ transcript, the tool input, the credential or a response body.
 risk gate, not the completion gate, not the catastrophic floor. The verdict is still computed
 and still reported.
 
+**The key comes from the plugin's settings, and from nowhere else.** `userConfig` with
+`sensitive: true`, and the `CLAUDE_PLUGIN_OPTION_TYPESAFE_API_KEY` channel the runtime
+exports for it. Never `os.environ["TYPESAFE_API_KEY"]`, never any other environment variable.
+A plugin that quietly picks up a secret already sitting in the user's shell and ships it
+somewhere is doing something the user did not agree to, and it makes the data handling
+impossible to reason about. A test pins this; do not defeat it.
+
+**Pin every version.** `/jevqueue:setup` installs `jev-governor==0.2.0`, not `jev-governor`.
+An unpinned install means the plugin's behaviour can change underneath a user's feet without
+the plugin changing at all.
+
 **The floor is under the model, not instead of it.** The catastrophic-operation list is
 consulted before the decision layer, because a decision model that shrugs at `rm -rf /` should
 not overrule a list this short.

@@ -80,8 +80,16 @@ def option(name: str, default: str = "") -> str:
 
 
 def api_key() -> str:
-    """The credential for the hosted decision model, wherever it was configured."""
-    return option("typesafe_api_key") or os.environ.get("TYPESAFE_API_KEY", "").strip()
+    """The credential for the hosted decision model.
+
+    It comes from the plugin's own settings -- the ``userConfig`` entry the user filled in
+    through ``/config`` -- and from nowhere else. Deliberately **not** from an environment
+    variable: a plugin that quietly reads a credential already sitting in the user's shell
+    and ships it to a server is doing something its user did not agree to, and it makes the
+    plugin's data handling impossible to reason about. One place for the key, and it is the
+    place the user filled it in.
+    """
+    return option("typesafe_api_key")
 
 
 def mode() -> str:

@@ -16,6 +16,7 @@ import json
 import os
 import subprocess
 import sys
+from pathlib import Path
 
 import pytest
 
@@ -227,6 +228,34 @@ class TestTheDecisionLayer:
 
         assert decision.allow is False
         assert "root" in decision.reason.lower()
+
+
+class TestCredentialHandling:
+    """The plugin reads a credential from its own settings, and from nowhere else.
+
+    A plugin that quietly picks up a secret already sitting in the user's shell and ships it
+    somewhere is doing something the user did not agree to. That is a policy, so it is
+    pinned by a test rather than left to good intentions.
+    """
+
+    def test_it_ignores_a_credential_in_the_environment(self, monkeypatch):
+        monkeypatch.setenv("TYPESAFE_API_KEY", "sk-should-never-be-read")
+        monkeypatch.delenv("CLAUDE_PLUGIN_OPTION_TYPESAFE_API_KEY", raising=False)
+
+        assert core.api_key() == ""
+
+    def test_it_reads_the_key_from_the_plugin_setting(self, monkeypatch):
+        monkeypatch.setenv("CLAUDE_PLUGIN_OPTION_TYPESAFE_API_KEY", "configured-by-the-user")
+
+        assert core.api_key() == "configured-by-the-user"
+
+    def test_no_source_file_names_a_credential_environment_variable(self):
+        for folder in ("jevqueue", "hooks", "scripts", "mcp"):
+            for path in Path(ROOT, folder).rglob("*.py"):
+                text = path.read_text(encoding="utf-8")
+                assert "TYPESAFE_API_KEY" not in text, (
+                    f"{path.name} reads a credential from the environment"
+                )
 
 
 class TestTheHook:
