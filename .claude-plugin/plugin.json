@@ -1,0 +1,49 @@
+{
+  "name": "jevqueue",
+  "version": "0.1.0",
+  "description": "A decision queue in front of your agent's tools. Before a tool runs, a decision model is asked whether it should, and the call is refused when the answer is no.",
+  "author": {
+    "name": "Vazghen Vardanian",
+    "url": "https://github.com/iamvazghen"
+  },
+  "homepage": "https://github.com/iamvazghen/jevqueue",
+  "repository": "https://github.com/iamvazghen/jevqueue",
+  "license": "MIT",
+  "icon": "./assets/icon.png",
+  "keywords": [
+    "agent-governance",
+    "agent-safety",
+    "decision-layer",
+    "guardrails",
+    "hooks",
+    "tool-calling",
+    "completion-gate",
+    "risk-gate",
+    "llm-ops",
+    "agents"
+  ],
+  "hooks": "./hooks/hooks.json",
+  "userConfig": {
+    "typesafe_api_key": {
+      "type": "string",
+      "title": "TypeSafe API key",
+      "description": "Optional. With it, decisions come from Jev, the hosted System One model. Without it, the queue runs the offline rules baseline, which needs no credential and no network.",
+      "sensitive": true
+    },
+    "mode": {
+      "type": "string",
+      "title": "Mode",
+      "description": "enforce refuses a tool call the decision layer says should not run. advisory reports the same verdicts but never blocks.",
+      "options": ["enforce", "advisory"],
+      "default": "enforce"
+    },
+    "confidence_floor": {
+      "type": "number",
+      "title": "Confidence floor",
+      "description": "Below this routing confidence the step is delegated rather than gated. An undecided decision is allowed, because a gate that refuses on doubt is a wall.",
+      "default": 0.8,
+      "min": 0,
+      "max": 1
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "jevqueue",
+  "description": "A decision queue in front of your agent's tools. Refuses the tool calls a decision model says should not run.",
+  "owner": {
+    "name": "Vazghen Vardanian",
+    "url": "https://github.com/iamvazghen"
+  },
+  "plugins": [
+    {
+      "name": "jevqueue",
+      "displayName": "Jevqueue",
+      "description": "Ask a decision model before every tool call. Refuses the call when the step is high risk or when the work is already done.",
+      "source": "./",
+      "category": "productivity",
+      "tags": [
+        "agent-governance",
+        "guardrails",
+        "decision-layer",
+        "hooks"
+      ]
+    }
+  ]
+}

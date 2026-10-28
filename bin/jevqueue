@@ -1,0 +1,8 @@
+#!/bin/sh
+# jevqueue -- the decision queue in front of your agent's tools.
+#
+# A thin shim: the plugin root is two directories up, and the script re-executes into the
+# plugin's own virtualenv when the decision layer lives there.
+set -e
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+exec "${JEVQUEUE_PYTHON:-python3}" "$ROOT/scripts/jevqueue.py" "$@"

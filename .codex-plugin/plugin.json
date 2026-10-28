@@ -1,0 +1,43 @@
+{
+  "name": "jevqueue",
+  "version": "0.1.0",
+  "description": "A decision queue in front of your agent's tools. Before a tool runs, a decision model is asked whether it should, and the call is refused when the answer is no.",
+  "author": {
+    "name": "Vazghen Vardanian",
+    "url": "https://github.com/iamvazghen"
+  },
+  "homepage": "https://github.com/iamvazghen/jevqueue",
+  "repository": "https://github.com/iamvazghen/jevqueue",
+  "license": "MIT",
+  "keywords": [
+    "agent-governance",
+    "agent-safety",
+    "decision-layer",
+    "guardrails",
+    "hooks",
+    "tool-calling",
+    "completion-gate",
+    "risk-gate",
+    "llm-ops",
+    "agents"
+  ],
+  "skills": "./skills/",
+  "hooks": "./hooks/hooks.json",
+  "interface": {
+    "displayName": "Jevqueue",
+    "shortDescription": "A decision queue in front of your agent's tools",
+    "longDescription": "Before a tool runs, a decision model is asked whether it should. High-risk steps are refused and escalated to a human, and a tool call after the work is already done is refused too. Works offline with no credential, or against the hosted Jev model with one.",
+    "developerName": "Vazghen Vardanian",
+    "category": "Productivity",
+    "capabilities": ["Instructions", "Lifecycle hooks"],
+    "websiteURL": "https://github.com/iamvazghen/jevqueue",
+    "defaultPrompt": [
+      "Is this step safe to take?",
+      "Refuse the tool call if the work is already done.",
+      "Show me why the queue allowed or refused this."
+    ],
+    "brandColor": "#1F2328",
+    "composerIcon": "../assets/icon.png",
+    "logo": "../assets/icon.png"
+  }
+}

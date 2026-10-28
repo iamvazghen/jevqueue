@@ -1,0 +1,21 @@
+{
+  "name": "jevqueue",
+  "interface": {
+    "displayName": "Jevqueue"
+  },
+  "plugins": [
+    {
+      "name": "jevqueue",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/iamvazghen/jevqueue.git",
+        "ref": "main"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

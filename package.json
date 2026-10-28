@@ -1,0 +1,41 @@
+{
+  "name": "jevqueue",
+  "version": "0.1.0",
+  "description": "A decision queue in front of your agent's tools. Before a tool runs, a decision model is asked whether it should, and the call is refused when the answer is no.",
+  "license": "MIT",
+  "author": "Vazghen Vardanian",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iamvazghen/jevqueue.git"
+  },
+  "homepage": "https://github.com/iamvazghen/jevqueue",
+  "keywords": [
+    "agent-governance",
+    "agent-safety",
+    "decision-layer",
+    "guardrails",
+    "hooks",
+    "tool-calling",
+    "claude-code",
+    "codex",
+    "llm-ops"
+  ],
+  "files": [
+    ".claude-plugin/",
+    ".codex-plugin/",
+    ".agents/",
+    "hooks/",
+    "skills/",
+    "commands/",
+    "scripts/",
+    "bin/",
+    "jevqueue/"
+  ],
+  "scripts": {
+    "test": "python -m pytest -q",
+    "status": "python scripts/jevqueue.py status"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
