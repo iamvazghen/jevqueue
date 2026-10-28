@@ -52,16 +52,38 @@ def _ensure_engine() -> None:
                 return
 
 
+def _payload() -> dict:
+    """Read the hook payload from stdin.
+
+    Decoded with ``utf-8-sig`` because a byte-order mark is a real thing that turns up on
+    the wire -- and a BOM in front of the JSON makes ``json.load`` raise, which would turn
+    into a silent fail-open on every single call. Reading the bytes ourselves and stripping
+    the mark if it is there is the difference between "the queue works" and "the queue never
+    runs".
+    """
+    try:
+        raw = sys.stdin.buffer.read()
+    except (AttributeError, ValueError, OSError):
+        raw = b""
+    if not raw:
+        return {}
+    try:
+        text = raw.decode("utf-8-sig", "replace")
+    except UnicodeDecodeError:
+        text = raw.decode("utf-8", "replace")
+    # `utf-8-sig` strips one byte-order mark. Some pipes write two.
+    text = text.lstrip("﻿").strip()
+    try:
+        message = json.loads(text)
+    except (ValueError, TypeError):
+        return {}
+    return message if isinstance(message, dict) else {}
+
+
 def main() -> int:
     _ensure_engine()
 
-    try:
-        payload = json.load(sys.stdin)
-    except (ValueError, TypeError):
-        return 0  # nothing to decide on; fail open
-    if not isinstance(payload, dict):
-        return 0
-
+    payload = _payload()
     tool_name = payload.get("tool_name") or ""
     if not tool_name:
         return 0

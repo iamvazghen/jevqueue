@@ -22,8 +22,17 @@ if ROOT not in sys.path:
 
 
 def main() -> int:
+    # Read the bytes ourselves and strip a byte-order mark if one is there. `json.load` on a
+    # BOM-prefixed stream raises, and a hook that raises on every prompt is a hook that
+    # never caches anything.
     try:
-        payload = json.load(sys.stdin)
+        raw = sys.stdin.buffer.read()
+    except (AttributeError, ValueError, OSError):
+        return 0
+    if not raw:
+        return 0
+    try:
+        payload = json.loads(raw.decode("utf-8-sig", "replace").lstrip("﻿").strip())
     except (ValueError, TypeError):
         return 0
     if not isinstance(payload, dict):

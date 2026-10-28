@@ -230,50 +230,66 @@ class TestTheDecisionLayer:
 
 
 class TestTheHook:
-    def _run(self, payload):
-        hook = os.path.join(ROOT, "hooks", "jevqueue_gate.py")
-        return subprocess.run(
-            [sys.executable, hook],
-            input=json.dumps(payload),
-            capture_output=True,
-            text=True,
-            timeout=60,
-        )
-
-    def test_it_allows_an_ordinary_tool_call(self):
-        result = self._run({"tool_name": "Read", "tool_input": {"file_path": "a.txt"}})
-
-        assert result.returncode == 0
-        assert result.stdout.strip() == ""
-
-    def test_it_refuses_a_catastrophic_command(self):
-        result = self._run({"tool_name": "Bash", "tool_input": {"command": "rm -rf /"}})
-
-        assert result.returncode == 0
-        decision = json.loads(result.stdout)
-        output = decision["hookSpecificOutput"]
-        assert output["hookEventName"] == "PreToolUse"
-        assert output["permissionDecision"] == "deny"
-        assert output["permissionDecisionReason"]
-
-    def test_it_survives_a_corrupt_payload(self):
+    def _run(self, payload: bytes) -> str:
+        """Run the hook with a raw payload and return its stdout as text."""
         hook = os.path.join(ROOT, "hooks", "jevqueue_gate.py")
         result = subprocess.run(
-            [sys.executable, hook], input="not json", capture_output=True, text=True, timeout=60
+            [sys.executable, hook],
+            input=payload,
+            capture_output=True,
+            timeout=60,
+        )
+        assert result.returncode == 0
+        return result.stdout.decode("utf-8", "replace")
+
+    def test_it_allows_an_ordinary_tool_call(self):
+        output = self._run(
+            json.dumps({"tool_name": "Read", "tool_input": {"file_path": "a.txt"}}).encode()
         )
 
-        assert result.returncode == 0
-        assert result.stdout.strip() == ""
+        assert output.strip() == ""
+
+    def test_it_refuses_a_catastrophic_command(self):
+        output = self._run(
+            json.dumps(
+                {"tool_name": "Bash", "tool_input": {"command": "rm -rf /"}}
+            ).encode()
+        )
+
+        decision = json.loads(output)
+        result = decision["hookSpecificOutput"]
+        assert result["hookEventName"] == "PreToolUse"
+        assert result["permissionDecision"] == "deny"
+        assert result["permissionDecisionReason"]
+
+    def test_it_survives_a_corrupt_payload(self):
+        assert self._run(b"not json").strip() == ""
+
+    def test_a_byte_order_mark_does_not_silently_allow_everything(self):
+        # A BOM in front of the payload is a real thing on the wire -- and some pipes write
+        # more than one. Without handling it, json.load raises, the hook fails open, and the
+        # queue never runs -- while looking, from the outside, exactly like a queue that
+        # works and finds nothing to refuse.
+        payload = json.dumps(
+            {"tool_name": "Bash", "tool_input": {"command": "rm -rf /"}}
+        ).encode()
+        for marks in (b"\xef\xbb\xbf", b"\xef\xbb\xbf\xef\xbb\xbf"):
+            output = self._run(marks + payload)
+
+            decision = json.loads(output)
+            assert decision["hookSpecificOutput"]["permissionDecision"] == "deny"
 
     def test_the_reason_never_carries_the_transcript(self):
-        result = self._run(
-            {
-                "tool_name": "Bash",
-                "tool_input": {"command": "rm -rf /"},
-                "transcript_path": "/secret/transcript.jsonl",
-            }
+        output = self._run(
+            json.dumps(
+                {
+                    "tool_name": "Bash",
+                    "tool_input": {"command": "rm -rf /"},
+                    "transcript_path": "/secret/transcript.jsonl",
+                }
+            ).encode()
         )
-        reason = json.loads(result.stdout)["hookSpecificOutput"]["permissionDecisionReason"]
+        reason = json.loads(output)["hookSpecificOutput"]["permissionDecisionReason"]
 
         assert "transcript" not in reason.lower()
         assert "/secret" not in reason
