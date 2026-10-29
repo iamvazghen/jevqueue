@@ -26,7 +26,7 @@ ROOT = os.path.dirname(HERE)
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
-from jevqueue import core  # noqa: E402
+from jevqueue import gate  # noqa: E402
 
 PROTOCOL_VERSION = "2024-11-05"
 
@@ -99,7 +99,7 @@ def _handle(message: dict) -> dict | None:
         tool = arguments.get("tool")
         if not isinstance(tool, str) or not tool:
             return _error(request_id, -32602, "a tool name is required")
-        decision = core.decide(tool, arguments.get("input") or {})
+        decision = gate.decide(tool, arguments.get("input") or {})
         return _result(
             request_id,
             {
@@ -126,7 +126,7 @@ def _version() -> str:
         from jevqueue import __version__
 
         return __version__
-    except Exception:  # noqa: BLE001
+    except Exception:
         return "0.0.0"
 
 
@@ -156,7 +156,7 @@ def main() -> int:
             continue
         try:
             response = _handle(message)
-        except Exception as error:  # noqa: BLE001 - a server that dies takes the agent with it
+        except Exception as error:
             response = _error(message.get("id"), -32603, f"internal error: {error}")
         if response is not None:
             sys.stdout.write(json.dumps(response) + "\n")

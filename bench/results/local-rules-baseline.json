@@ -1,0 +1,725 @@
+{
+  "model": "local",
+  "scenarios": 14,
+  "repeat": 5,
+  "decisions": 70,
+  "routing_accuracy": 1.0,
+  "correct": 70,
+  "enforced_rate": 0.7143,
+  "enforced": 50,
+  "path_distribution": {
+    "tool_arguments": 35,
+    "delegated": 20,
+    "risk_stop": 10,
+    "final_response": 5
+  },
+  "decision_ms": {
+    "p50": 0.395,
+    "p95": 0.496,
+    "max": 0.924,
+    "mean": 0.396
+  },
+  "mean_input_tokens_per_decision": 215.1,
+  "rows": [
+    {
+      "scenario": "read-a-file",
+      "expected": "read_file",
+      "actual": "read_file",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.924
+    },
+    {
+      "scenario": "read-another-file",
+      "expected": "read_file",
+      "actual": "read_file",
+      "path": "delegated",
+      "enforced": false,
+      "confidence": 0.5,
+      "risk": "low",
+      "decision_ms": 0.377
+    },
+    {
+      "scenario": "list-a-directory",
+      "expected": "list_directory",
+      "actual": "list_directory",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.352
+    },
+    {
+      "scenario": "search-the-codebase",
+      "expected": "search_code",
+      "actual": "search_code",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.31
+    },
+    {
+      "scenario": "run-the-tests",
+      "expected": "run_tests",
+      "actual": "run_tests",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "medium",
+      "decision_ms": 0.306
+    },
+    {
+      "scenario": "write-a-file",
+      "expected": "write_file",
+      "actual": "write_file",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "medium",
+      "decision_ms": 0.268
+    },
+    {
+      "scenario": "post-to-a-channel",
+      "expected": "post_message",
+      "actual": "post_message",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.8,
+      "risk": "medium",
+      "decision_ms": 0.287
+    },
+    {
+      "scenario": "delete-a-file",
+      "expected": "delete_file",
+      "actual": "delete_file",
+      "path": "risk_stop",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "high",
+      "decision_ms": 0.379
+    },
+    {
+      "scenario": "deploy-a-service",
+      "expected": "deploy_service",
+      "actual": "deploy_service",
+      "path": "risk_stop",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "high",
+      "decision_ms": 0.362
+    },
+    {
+      "scenario": "the-agent-has-already-answered",
+      "expected": "finish",
+      "actual": "finish",
+      "path": "final_response",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.156
+    },
+    {
+      "scenario": "no-tool-fits-a-conversation",
+      "expected": "delegate",
+      "actual": "delegate",
+      "path": "delegated",
+      "enforced": false,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.39
+    },
+    {
+      "scenario": "no-tool-fits-a-vague-ask",
+      "expected": "delegate",
+      "actual": "delegate",
+      "path": "delegated",
+      "enforced": false,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.367
+    },
+    {
+      "scenario": "no-tool-fits-a-question-about-the-model",
+      "expected": "delegate",
+      "actual": "delegate",
+      "path": "delegated",
+      "enforced": false,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.334
+    },
+    {
+      "scenario": "two-tools-plausible",
+      "expected": "read_file",
+      "actual": "read_file",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.385
+    },
+    {
+      "scenario": "read-a-file",
+      "expected": "read_file",
+      "actual": "read_file",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.408
+    },
+    {
+      "scenario": "read-another-file",
+      "expected": "read_file",
+      "actual": "read_file",
+      "path": "delegated",
+      "enforced": false,
+      "confidence": 0.5,
+      "risk": "low",
+      "decision_ms": 0.444
+    },
+    {
+      "scenario": "list-a-directory",
+      "expected": "list_directory",
+      "actual": "list_directory",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.496
+    },
+    {
+      "scenario": "search-the-codebase",
+      "expected": "search_code",
+      "actual": "search_code",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.446
+    },
+    {
+      "scenario": "run-the-tests",
+      "expected": "run_tests",
+      "actual": "run_tests",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "medium",
+      "decision_ms": 0.414
+    },
+    {
+      "scenario": "write-a-file",
+      "expected": "write_file",
+      "actual": "write_file",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "medium",
+      "decision_ms": 0.4
+    },
+    {
+      "scenario": "post-to-a-channel",
+      "expected": "post_message",
+      "actual": "post_message",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.8,
+      "risk": "medium",
+      "decision_ms": 0.44
+    },
+    {
+      "scenario": "delete-a-file",
+      "expected": "delete_file",
+      "actual": "delete_file",
+      "path": "risk_stop",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "high",
+      "decision_ms": 0.377
+    },
+    {
+      "scenario": "deploy-a-service",
+      "expected": "deploy_service",
+      "actual": "deploy_service",
+      "path": "risk_stop",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "high",
+      "decision_ms": 0.377
+    },
+    {
+      "scenario": "the-agent-has-already-answered",
+      "expected": "finish",
+      "actual": "finish",
+      "path": "final_response",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.209
+    },
+    {
+      "scenario": "no-tool-fits-a-conversation",
+      "expected": "delegate",
+      "actual": "delegate",
+      "path": "delegated",
+      "enforced": false,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.378
+    },
+    {
+      "scenario": "no-tool-fits-a-vague-ask",
+      "expected": "delegate",
+      "actual": "delegate",
+      "path": "delegated",
+      "enforced": false,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.368
+    },
+    {
+      "scenario": "no-tool-fits-a-question-about-the-model",
+      "expected": "delegate",
+      "actual": "delegate",
+      "path": "delegated",
+      "enforced": false,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.382
+    },
+    {
+      "scenario": "two-tools-plausible",
+      "expected": "read_file",
+      "actual": "read_file",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.439
+    },
+    {
+      "scenario": "read-a-file",
+      "expected": "read_file",
+      "actual": "read_file",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.427
+    },
+    {
+      "scenario": "read-another-file",
+      "expected": "read_file",
+      "actual": "read_file",
+      "path": "delegated",
+      "enforced": false,
+      "confidence": 0.5,
+      "risk": "low",
+      "decision_ms": 0.401
+    },
+    {
+      "scenario": "list-a-directory",
+      "expected": "list_directory",
+      "actual": "list_directory",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.439
+    },
+    {
+      "scenario": "search-the-codebase",
+      "expected": "search_code",
+      "actual": "search_code",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.439
+    },
+    {
+      "scenario": "run-the-tests",
+      "expected": "run_tests",
+      "actual": "run_tests",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "medium",
+      "decision_ms": 0.4
+    },
+    {
+      "scenario": "write-a-file",
+      "expected": "write_file",
+      "actual": "write_file",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "medium",
+      "decision_ms": 0.422
+    },
+    {
+      "scenario": "post-to-a-channel",
+      "expected": "post_message",
+      "actual": "post_message",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.8,
+      "risk": "medium",
+      "decision_ms": 0.413
+    },
+    {
+      "scenario": "delete-a-file",
+      "expected": "delete_file",
+      "actual": "delete_file",
+      "path": "risk_stop",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "high",
+      "decision_ms": 0.395
+    },
+    {
+      "scenario": "deploy-a-service",
+      "expected": "deploy_service",
+      "actual": "deploy_service",
+      "path": "risk_stop",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "high",
+      "decision_ms": 0.365
+    },
+    {
+      "scenario": "the-agent-has-already-answered",
+      "expected": "finish",
+      "actual": "finish",
+      "path": "final_response",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.181
+    },
+    {
+      "scenario": "no-tool-fits-a-conversation",
+      "expected": "delegate",
+      "actual": "delegate",
+      "path": "delegated",
+      "enforced": false,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.362
+    },
+    {
+      "scenario": "no-tool-fits-a-vague-ask",
+      "expected": "delegate",
+      "actual": "delegate",
+      "path": "delegated",
+      "enforced": false,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.333
+    },
+    {
+      "scenario": "no-tool-fits-a-question-about-the-model",
+      "expected": "delegate",
+      "actual": "delegate",
+      "path": "delegated",
+      "enforced": false,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.37
+    },
+    {
+      "scenario": "two-tools-plausible",
+      "expected": "read_file",
+      "actual": "read_file",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.426
+    },
+    {
+      "scenario": "read-a-file",
+      "expected": "read_file",
+      "actual": "read_file",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.41
+    },
+    {
+      "scenario": "read-another-file",
+      "expected": "read_file",
+      "actual": "read_file",
+      "path": "delegated",
+      "enforced": false,
+      "confidence": 0.5,
+      "risk": "low",
+      "decision_ms": 0.391
+    },
+    {
+      "scenario": "list-a-directory",
+      "expected": "list_directory",
+      "actual": "list_directory",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.408
+    },
+    {
+      "scenario": "search-the-codebase",
+      "expected": "search_code",
+      "actual": "search_code",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.457
+    },
+    {
+      "scenario": "run-the-tests",
+      "expected": "run_tests",
+      "actual": "run_tests",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "medium",
+      "decision_ms": 0.422
+    },
+    {
+      "scenario": "write-a-file",
+      "expected": "write_file",
+      "actual": "write_file",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "medium",
+      "decision_ms": 0.395
+    },
+    {
+      "scenario": "post-to-a-channel",
+      "expected": "post_message",
+      "actual": "post_message",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.8,
+      "risk": "medium",
+      "decision_ms": 0.397
+    },
+    {
+      "scenario": "delete-a-file",
+      "expected": "delete_file",
+      "actual": "delete_file",
+      "path": "risk_stop",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "high",
+      "decision_ms": 0.392
+    },
+    {
+      "scenario": "deploy-a-service",
+      "expected": "deploy_service",
+      "actual": "deploy_service",
+      "path": "risk_stop",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "high",
+      "decision_ms": 0.419
+    },
+    {
+      "scenario": "the-agent-has-already-answered",
+      "expected": "finish",
+      "actual": "finish",
+      "path": "final_response",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.19
+    },
+    {
+      "scenario": "no-tool-fits-a-conversation",
+      "expected": "delegate",
+      "actual": "delegate",
+      "path": "delegated",
+      "enforced": false,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.367
+    },
+    {
+      "scenario": "no-tool-fits-a-vague-ask",
+      "expected": "delegate",
+      "actual": "delegate",
+      "path": "delegated",
+      "enforced": false,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.371
+    },
+    {
+      "scenario": "no-tool-fits-a-question-about-the-model",
+      "expected": "delegate",
+      "actual": "delegate",
+      "path": "delegated",
+      "enforced": false,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.356
+    },
+    {
+      "scenario": "two-tools-plausible",
+      "expected": "read_file",
+      "actual": "read_file",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.397
+    },
+    {
+      "scenario": "read-a-file",
+      "expected": "read_file",
+      "actual": "read_file",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.466
+    },
+    {
+      "scenario": "read-another-file",
+      "expected": "read_file",
+      "actual": "read_file",
+      "path": "delegated",
+      "enforced": false,
+      "confidence": 0.5,
+      "risk": "low",
+      "decision_ms": 0.411
+    },
+    {
+      "scenario": "list-a-directory",
+      "expected": "list_directory",
+      "actual": "list_directory",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.409
+    },
+    {
+      "scenario": "search-the-codebase",
+      "expected": "search_code",
+      "actual": "search_code",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.757
+    },
+    {
+      "scenario": "run-the-tests",
+      "expected": "run_tests",
+      "actual": "run_tests",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "medium",
+      "decision_ms": 0.47
+    },
+    {
+      "scenario": "write-a-file",
+      "expected": "write_file",
+      "actual": "write_file",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "medium",
+      "decision_ms": 0.436
+    },
+    {
+      "scenario": "post-to-a-channel",
+      "expected": "post_message",
+      "actual": "post_message",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.8,
+      "risk": "medium",
+      "decision_ms": 0.436
+    },
+    {
+      "scenario": "delete-a-file",
+      "expected": "delete_file",
+      "actual": "delete_file",
+      "path": "risk_stop",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "high",
+      "decision_ms": 0.473
+    },
+    {
+      "scenario": "deploy-a-service",
+      "expected": "deploy_service",
+      "actual": "deploy_service",
+      "path": "risk_stop",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "high",
+      "decision_ms": 0.511
+    },
+    {
+      "scenario": "the-agent-has-already-answered",
+      "expected": "finish",
+      "actual": "finish",
+      "path": "final_response",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.215
+    },
+    {
+      "scenario": "no-tool-fits-a-conversation",
+      "expected": "delegate",
+      "actual": "delegate",
+      "path": "delegated",
+      "enforced": false,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.412
+    },
+    {
+      "scenario": "no-tool-fits-a-vague-ask",
+      "expected": "delegate",
+      "actual": "delegate",
+      "path": "delegated",
+      "enforced": false,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.375
+    },
+    {
+      "scenario": "no-tool-fits-a-question-about-the-model",
+      "expected": "delegate",
+      "actual": "delegate",
+      "path": "delegated",
+      "enforced": false,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.387
+    },
+    {
+      "scenario": "two-tools-plausible",
+      "expected": "read_file",
+      "actual": "read_file",
+      "path": "tool_arguments",
+      "enforced": true,
+      "confidence": 0.9,
+      "risk": "low",
+      "decision_ms": 0.457
+    }
+  ]
+}

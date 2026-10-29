@@ -12,8 +12,6 @@ import os
 import subprocess
 import sys
 
-import pytest
-
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SERVER = os.path.join(ROOT, "mcp", "jevqueue_mcp.py")
 
@@ -73,7 +71,9 @@ class TestTheProtocol:
         assert responses[0]["id"] == 1
 
     def test_tools_list_is_answered(self):
-        responses = run([json.dumps({"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}})])
+        responses = run(
+            [json.dumps({"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}})]
+        )
 
         assert responses[0]["result"]["tools"][0]["name"] == "jevqueue_decide"
 

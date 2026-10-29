@@ -11,6 +11,7 @@ the thing it is being asked now, which is the wrong question often enough to mat
 
 from __future__ import annotations
 
+import contextlib
 import json
 import os
 import sys
@@ -42,12 +43,11 @@ def main() -> int:
     if not isinstance(prompt, str) or not prompt.strip():
         return 0
 
-    from jevqueue.core import save_prompt
+    from jevqueue.gate import save_prompt
 
-    try:
+    # Caching a prompt must never break the session.
+    with contextlib.suppress(Exception):
         save_prompt(payload.get("session_id") or "", prompt)
-    except Exception:  # noqa: BLE001 - caching a prompt must never break the session
-        pass
     return 0
 
 

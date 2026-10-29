@@ -27,20 +27,43 @@ jobs:
         with:
           enable-cache: true
 
-      # The decision layer is the sibling project, not a dependency on PyPI yet. Installing it
-      # from source means the full engine -- not just the fallback policy -- is what CI
-      # exercises.
-      - name: Install the decision layer from source
+      # The package has no required dependencies, so the base install is enough for the
+      # offline engine. The extras are what the framework adapters need.
+      - name: Install
         run: |
-          git clone --depth 1 https://github.com/iamvazghen/jev-governor ../jev-governor
           uv venv --python ${{ matrix.python-version }}
-          uv pip install -e "../jev-governor" pytest
+          uv pip install -e ".[dev,langchain,pydantic-ai]"
 
       - name: Confirm the interpreter is the one under test
         run: uv run python -c "import sys; print(sys.version)"
 
       - name: Test
         run: uv run pytest -q
+
+      - name: Lint
+        run: uv run ruff check jevqueue tests hooks mcp scripts
+
+      - name: Types
+        run: uv run mypy
+
+      - name: Import every module with no extras installed
+        run: uv run python scripts/check_bare_install.py
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - name: Build the distribution
+        run: uv build
+      - name: Check the metadata renders on PyPI
+        run: uvx twine check dist/*
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
 
   validate:
     runs-on: ubuntu-latest

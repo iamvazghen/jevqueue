@@ -1,0 +1,121 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "jevqueue"
+version = "0.3.0"
+description = "A decision queue in front of your agent's tools: a decision model is asked whether a step should run, and the step is refused when the answer is no."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE", "NOTICE"]
+authors = [{ name = "Vazghen Vardanian" }]
+keywords = [
+  "agent-governance",
+  "agent-safety",
+  "agents",
+  "decision-layer",
+  "guardrails",
+  "hooks",
+  "llm-ops",
+  "mcp",
+  "plugin",
+  "tool-calling",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Typing :: Typed",
+]
+
+# **No required dependencies.** The offline decision layer is pure standard library, and the
+# plugin has to be installable without a setup step -- a plugin that needs an install before
+# it works is a plugin a lot of people will not install.
+#
+# `httpx` is needed only for the hosted decision model, so it is an extra rather than a
+# requirement. The client says so plainly if it is missing.
+dependencies = []
+
+[project.optional-dependencies]
+# The hosted decision model, over HTTPS.
+hosted = ["httpx>=0.27"]
+# Framework adapters.
+langchain = ["langchain-core>=1.0"]
+pydantic-ai = ["pydantic-ai>=1.0"]
+# Schema validation for pre-approved static tool payloads.
+static = ["jsonschema>=4.18"]
+dev = [
+  "pytest>=8.0",
+  "pytest-asyncio>=0.23",
+  "ruff>=0.6",
+  "mypy>=1.11",
+  # The client tests exercise the hosted path, so the extra it needs is a dev dependency.
+  "httpx>=0.27",
+]
+
+[project.urls]
+Homepage = "https://github.com/iamvazghen/jevqueue"
+Documentation = "https://github.com/iamvazghen/jevqueue/tree/main/docs"
+Repository = "https://github.com/iamvazghen/jevqueue"
+Issues = "https://github.com/iamvazghen/jevqueue/issues"
+Changelog = "https://github.com/iamvazghen/jevqueue/blob/main/CHANGELOG.md"
+Source = "https://github.com/iamvazghen/jevqueue/tree/main/jevqueue"
+
+[project.scripts]
+jevqueue = "jevqueue.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["jevqueue"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/jevqueue",
+  "/hooks",
+  "/commands",
+  "/skills",
+  "/mcp",
+  "/scripts",
+  "/bin",
+  "/docs",
+  "/examples",
+  "/assets",
+  "/README.md",
+  "/AGENTS.md",
+  "/PRIVACY.md",
+  "/NOTICE",
+  "/LICENSE",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# The client's async tests are ordinary `async def` tests, not explicitly marked ones.
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["jevqueue", "tests"]
+lint.select = ["E", "F", "W", "I", "UP", "B", "SIM", "RUF"]
+lint.ignore = ["PLC0415"]
+
+[tool.mypy]
+python_version = "3.10"
+files = ["jevqueue"]
+ignore_missing_imports = true
+warn_unused_ignores = false
+
+# The framework adapters import the frameworks' internals. Following those imports makes
+# mypy walk the whole of pydantic-ai and langchain-core, which takes minutes and checks
+# code this package does not own.
+[[tool.mypy.overrides]]
+module = ["pydantic_ai.*", "langchain_core.*"]
+follow_imports = "skip"
+ignore_missing_imports = true

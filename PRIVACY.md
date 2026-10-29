@@ -15,9 +15,9 @@ Two scripts, both standard-library Python, both shipped in this repository:
 | `hooks/jevqueue_prompt.py` | when you submit a prompt | writes your current request to a cache file under the plugin's data directory |
 | `hooks/jevqueue_gate.py` | before every tool call | reads that cache and the session transcript, asks the decision model, and either allows the call or refuses it |
 
-The decision model is the `jev-governor` package, installed into the plugin's own environment
-by `/jevqueue:setup`. Without it, the plugin falls back to a small built-in policy that knows
-about a short list of catastrophic operations and nothing else.
+The decision model is the `jevqueue` package itself, which ships inside this plugin. There is
+nothing to install and nothing to fetch. Without a configured key, the plugin falls back to
+the offline rules baseline and makes no network request at all.
 
 The plugin never modifies your shell, your Python, your project files, or your `PATH`.
 
@@ -64,8 +64,6 @@ and runs two of them.
 - **A cached copy of your current request**, under the plugin's data directory
   (`${CLAUDE_PLUGIN_DATA}/state/`). It expires after six hours and is overwritten by the next
   prompt.
-- **The plugin's own environment**, under `${CLAUDE_PLUGIN_DATA}/venv`, when you run
-  `/jevqueue:setup`.
 
 Both live inside the plugin's data directory and are removed when the plugin is uninstalled.
 Nothing is written into your project.

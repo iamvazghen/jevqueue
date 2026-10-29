@@ -3,24 +3,32 @@
 `jevqueue` is an independent community project. It is not affiliated with, endorsed by, or
 supported by TypeSafe AI or Nous Research.
 
-## What this plugin depends on
+## What this project contains
 
-**`jev-governor`** — the decision layer this plugin calls. MIT licensed, by the same author.
-<https://github.com/iamvazghen/jev-governor>
+Both halves live in this one repository and ship in one install:
+
+- **The decision layer** — the judgment model, the typed questions, the distrust layer, the
+  guard order, and the framework adapters. MIT licensed, by the same author.
+- **The gate** — the pre-tool hook that asks the decision layer whether a step should run,
+  and refuses the call when the answer is no.
+
+There is no separate package to install and no setup step. The plugin *is* the library, with
+a hook in front of it.
+
+## What it talks to
 
 **Jev** — TypeSafe's System One model, a separately hosted service. When a user configures a
 TypeSafe API key, decisions are made by that service and the request leaves the user's
 machine. Use of it is subject to [TypeSafe's terms](https://docs.typesafe.ai/legal) and
-[privacy policy](https://docs.typesafe.ai/legal/privacy-policy). This plugin distributes no
-model weights, no API keys and no usage credits.
+privacy policy. This project distributes no model weights, no API keys and no usage credits.
 
-Without a configured key, the plugin uses the offline rules baseline that ships inside
-`jev-governor`. That path makes no network request of any kind.
+Without a configured key, the offline rules baseline that ships inside this package answers
+the questions locally. That path makes no network request of any kind.
 
 ## Third-party code
 
-None. The plugin has no runtime dependencies of its own beyond the Python standard library,
-and the decision layer has one dependency (`httpx`).
+None. The package has no required dependencies; the decision layer is pure standard library,
+and `httpx` -- needed only for the hosted model -- is an optional extra.
 
 ## Trademarks
 

@@ -23,9 +23,25 @@ jevqueue moves the decision out of that pass and gives it a place to be enforced
 
 ---
 
+## One package, two guarantees
+
+Both live here, in one install, with **no dependencies**.
+
+| | What it is | Who it is for |
+|---|---|---|
+| **The decision layer** | The provider is constrained to a named tool, and the result is checked against it. A provider that ignores the constraint raises before anything executes. | People **building** an agent |
+| **The gate** | A pre-tool hook that refuses a step the decision layer says should not run, and escalates a risky one. | People **running** an agent |
+
+They are different guarantees and it matters which one you have. A hook cannot constrain a
+provider's generation — the provider is not yours to constrain from a hook. What it can do is
+refuse a step, and that is worth a great deal. See [Which guarantee do you
+need?](#which-guarantee-do-you-need).
+
+---
+
 ## Install
 
-### Claude Code
+### As a plugin — Claude Code
 
 ```bash
 claude plugin marketplace add iamvazghen/jevqueue
@@ -44,20 +60,37 @@ Or from inside a session, on v2.1.275 or later:
 /plugin install jevqueue --marketplace iamvazghen/jevqueue
 ```
 
-### Codex CLI
+### As a plugin — Codex CLI
 
 ```bash
 codex plugin marketplace add iamvazghen/jevqueue
 codex plugin add jevqueue@jevqueue
 ```
 
-### Any agent that reads skills
+### As a library — in the agent you are building
 
-The two skills in `skills/` work in any agent that reads `SKILL.md` — Claude Code, Codex,
-Cursor, Windsurf, and anything else that follows the open skill format. Copy `skills/jevqueue`
-into your agent's skills directory and it works on its own, with no hooks and no setup.
+```bash
+pip install jevqueue
+```
 
-### Any MCP-capable agent
+No dependencies. `httpx` is needed only for the hosted decision model, and is an extra:
+`pip install "jevqueue[hosted]"`.
+
+```python
+from jevqueue import Governor, JevClient
+from jevqueue.adapters.openai_chat import OpenAIChatHost
+
+governor = Governor(JevClient(key))
+response = governor.step(OpenAIChatHost(request, send_it))
+```
+
+### As a skill — any agent that reads `SKILL.md`
+
+The two skills in `skills/` work in any agent that reads `SKILL.md`: Claude Code, Codex,
+Cursor, Windsurf, and anything else that follows the open skill format. Copy them into your
+agent's skills directory and they work on their own, with no hooks and no setup.
+
+### As an MCP server — any MCP-capable agent
 
 ```bash
 python mcp/jevqueue_mcp.py
@@ -68,39 +101,29 @@ answers the same question the hook answers.
 
 ---
 
-## Set it up
-
-Installing the plugin is enough to get the fallback policy running. One more step puts the
-real decision layer behind it:
-
-```
-/jevqueue:setup
-```
-
-That installs `jev-governor` into the plugin's own environment — pinned to an exact version,
-inside the plugin's data directory. Nothing touches your system Python, your project, or
-your shell.
-
 ## Configure it
-
-The plugin's settings live in `/config` (Claude Code) or your agent's equivalent:
 
 | Setting | Meaning |
 |---|---|
-| **TypeSafe API key** | Optional. With it, decisions come from the hosted Jev model. Without it, the offline rules baseline. |
+| **TypeSafe API key** | Optional. With it, decisions come from the hosted Jev model. Without it, the offline rules baseline — no account, no network, no cost. |
 | **Mode** | `enforce` refuses a step. `advisory` reports the same verdicts and never blocks. |
 | **Confidence floor** | Below this routing confidence the step is delegated rather than gated. |
 
-**The key is read from that setting and nowhere else.** Not from `TYPESAFE_API_KEY`, not from
-any environment variable. A plugin that quietly picks up a secret already sitting in your
-shell and ships it somewhere is doing something you did not agree to, and it makes the data
-handling impossible to reason about. See [PRIVACY.md](PRIVACY.md).
+**The key is read from the plugin's own settings, and nowhere else.** Not from
+`TYPESAFE_API_KEY`, not from any environment variable. A plugin that quietly picks up a
+secret already sitting in your shell and ships it somewhere is doing something you did not
+agree to, and it makes the data handling impossible to reason about. See
+[PRIVACY.md](PRIVACY.md).
+
+For the library, `JevClient(key)` takes the key explicitly, and the framework adapters read
+`TYPESAFE_API_KEY` the way every Python library reads one — that is a library's job, and it
+is a different surface from the plugin's.
 
 ---
 
 ## What it does
 
-On every tool call, jevqueue asks one question about the pending step:
+On every tool call, the gate asks one question about the pending step:
 
 > **Should this step run at all?**
 
@@ -143,12 +166,27 @@ every step. A gate that refuses on doubt is a wall.
 
 ---
 
+## Which guarantee do you need?
+
+**You are running an agent and want its steps checked.** Install the plugin. The hook runs
+before each tool call, asks the decision layer, and refuses the step when the answer is no.
+This is the **guardrail** guarantee.
+
+**You are building an agent and want its tool choice constrained.** Use the library. The
+host sets `tool_choice` to a named function with `parallel_tool_calls=False`, and the
+result is checked: a provider that called something else raises `JevError` before anything
+executes. This is the **enforcement** guarantee, and it is the stronger one.
+
+Both are the same code. The difference is where the constraint is applied.
+
+---
+
 ## The engines
 
 | Engine | What it is | Needs |
 |---|---|---|
-| `jev-governor` | The real decision layer: calibrated answers, a distrust layer, a guard order | The package, which `/jevqueue:setup` installs |
-| `policy` | A dependency-free fallback that knows about the catastrophic list and nothing else | Nothing |
+| `jevqueue` | The decision layer: calibrated answers, a distrust layer, a guard order | Nothing — it is in this package |
+| `policy` | The catastrophic-operation floor, running alone because the decision layer could not be reached | Nothing |
 
 Check which one you have:
 
@@ -187,21 +225,16 @@ you have configured an API key, and when it does, the request goes to
 
 ---
 
-## Other agents
+## Frameworks
 
-One repository, one engine, several runtimes. The manifests are per-tool; the engine is
-shared.
-
-| Agent | What it gets | Manifest |
+| Framework | Integration | Extra |
 |---|---|---|
-| **Claude Code** | `PreToolUse` hook, commands, skills, settings | `.claude-plugin/` |
-| **Codex CLI** | hooks, skills, commands, interface metadata | `.codex-plugin/` |
-| **agents.md standard** | the portable manifest | `.agents/plugins/` |
-| **MCP-capable agents** | an MCP server exposing `jevqueue_decide` | `mcp/` |
-| **Skill-reading agents** | two portable skills | `skills/` |
-
-The portable pieces are the skills and the MCP server. The hook is the strong integration, and
-it is the only part that needs a runtime with hooks.
+| **Any OpenAI-compatible loop** | `OpenAIChatHost` | — |
+| **LangChain** | `GovernedChatModel`, a chat-model wrapper | `jevqueue[langchain]` |
+| **Pydantic AI** | `GovernedModel`, a `WrapperModel` | `jevqueue[pydantic-ai]` |
+| **Hermes Agent** | a six-line seam in `agent/turn_api_call.py` | — |
+| **OpenClaw** | `OpenClawRouter` — fleet routing, *not* governed | — |
+| **Your own** | seven methods — see [docs/adapters.md](docs/adapters.md) | — |
 
 ---
 
@@ -211,17 +244,12 @@ it is the only part that needs a runtime with hooks.
 - **It is not an authorization layer.** A `low` risk verdict is not permission to loosen your
   own tool permissions. Your existing authorization must stay correct on its own.
 - **It is not always right.** A confident wrong verdict is possible. That is why the gates
-  are narrow and why the fallback exists.
+  are narrow and why the floor exists.
 - **It does not replace your model.** The generative model still writes the arguments and the
   prose. jevqueue decides whether the step runs; the model still does the work.
 
 And the honest limitation, stated up front: **a pre-tool hook cannot constrain the
-provider's tool choice**, because the provider is not ours to constrain from a hook. What it
-can do is refuse a step the decision layer says should not run, and escalate a risky one. If
-you need the stronger guarantee — the provider constrained to a named tool, and the result
-checked against it — that is the [decision layer](https://github.com/iamvazghen/jev-governor)
-itself, installed as a library in the agent you are building. Both are worth having; they are
-not the same thing.
+provider's tool choice.** If you need the stronger guarantee, use the library.
 
 ---
 
@@ -229,33 +257,39 @@ not the same thing.
 
 ```text
 jevqueue/
-├── .claude-plugin/          Claude Code manifest + marketplace entry
-├── .codex-plugin/          Codex CLI manifest
-├── .agents/plugins/        the agents.md standard manifest
-├── hooks/
-│   ├── hooks.json          UserPromptSubmit + PreToolUse
-│   ├── jevqueue_gate.py    the decision, and the refusal
-│   └── jevqueue_prompt.py  remembers what was asked
-├── skills/                 the portable core: jevqueue, jevqueue-adapter
-├── commands/               /jevqueue:setup, /jevqueue:check, /jevqueue:status
-├── mcp/jevqueue_mcp.py     the portable core as an MCP server
-├── jevqueue/core.py        the engine
-├── scripts/jevqueue.py     the command line
-├── bin/                    shims so `jevqueue` is on PATH
-├── assets/icon.png         the icon
-└── PRIVACY.md              what this plugin runs, sends and fetches
+├── jevqueue/                 the package
+│   ├── client.py             the hosted model, and the DecisionModel protocol
+│   ├── decision.py           the parser, and the distrust layer
+│   ├── governor.py           the guards, in order
+│   ├── questions.py          the three typed questions
+│   ├── state.py              the bounded, read-only projection
+│   ├── local.py              the offline rules baseline
+│   ├── policy.py             the catastrophic-operation floor
+│   ├── gate.py               the hook-facing engine
+│   ├── cli.py                the command line
+│   └── adapters/             Hermes, LangChain, OpenAI, OpenClaw, Pydantic AI
+├── hooks/                    the PreToolUse and UserPromptSubmit hooks
+├── commands/                 /jevqueue:setup, /jevqueue:check, /jevqueue:status
+├── skills/                   the portable core: jevqueue, jevqueue-adapter
+├── mcp/jevqueue_mcp.py       the portable core as an MCP server
+├── scripts/                  the bare-import check, the icon, the CLI shim
+├── bin/                      shims so `jevqueue` is on PATH
+├── docs/                     architecture, limits, comparison, adapters, roadmap
+└── PRIVACY.md                what this plugin runs, sends and fetches
 ```
 
 ## Development
 
 ```bash
-uv venv && uv pip install -e "..[dev]" pytest
+uv venv && uv pip install -e ".[dev,langchain,pydantic-ai]"
 uv run pytest
+uv run ruff check jevqueue tests hooks mcp scripts
+uv run mypy
 claude plugin validate --strict .
 ```
 
-The suite is offline by design: no network, no API key, no provider. A test that needs a
-credential does not run, and one that does not run is decoration.
+251 tests, offline: no network, no API key, no provider. A test that needs a credential does
+not run, and one that does not run is decoration.
 
 ## License
 
