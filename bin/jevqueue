@@ -1,8 +1,10 @@
 #!/bin/sh
 # jevqueue -- the decision queue in front of your agent's tools.
 #
-# A thin shim: the plugin root is two directories up, and the script re-executes into the
-# plugin's own virtualenv when the decision layer lives there.
+# A thin shim: the plugin root is two directories up, and the script runs the CLI from there.
+# The CLI lives in the package, not next to this shim -- a file named `jevqueue.py` inside
+# the repository would shadow the `jevqueue/` package for anything that runs from this
+# directory.
 set -e
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-exec "${JEVQUEUE_PYTHON:-python3}" "$ROOT/scripts/jevqueue.py" "$@"
+exec "${JEVQUEUE_PYTHON:-python3}" "$ROOT/scripts/jevqueue_cli.py" "$@"

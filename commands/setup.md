@@ -19,7 +19,7 @@ jevqueue status
 If `jevqueue` is not on PATH, run it directly:
 
 ```bash
-python "${CLAUDE_PLUGIN_ROOT}/scripts/jevqueue.py" status
+python "${CLAUDE_PLUGIN_ROOT}/scripts/jevqueue_cli.py" status
 ```
 
 Report what it says: the version, the engine, the model it is using, the mode, and whether a

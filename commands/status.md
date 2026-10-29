@@ -17,7 +17,7 @@ jevqueue status
 If the `jevqueue` command is not on PATH, run the script directly:
 
 ```bash
-python "${CLAUDE_PLUGIN_ROOT}/scripts/jevqueue.py" status
+python "${CLAUDE_PLUGIN_ROOT}/scripts/jevqueue_cli.py" status
 ```
 
 Then report, in this order:

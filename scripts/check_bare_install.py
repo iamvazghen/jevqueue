@@ -18,17 +18,29 @@ break by moving an import to the top of a file:
 from __future__ import annotations
 
 import importlib
+import os
 import sys
+
+# The repository root goes first, deliberately. `scripts/` is this script's own directory and
+# therefore lands on `sys.path` automatically, and a module sitting there can shadow the
+# package it is supposed to be checking.
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if ROOT in sys.path:
+    sys.path.remove(ROOT)
+sys.path.insert(0, ROOT)
 
 MODULES = (
     "jevqueue",
+    "jevqueue.cli",
     "jevqueue.client",
     "jevqueue.config",
     "jevqueue.decision",
     "jevqueue.errors",
+    "jevqueue.gate",
     "jevqueue.governor",
     "jevqueue.host",
     "jevqueue.local",
+    "jevqueue.policy",
     "jevqueue.questions",
     "jevqueue.state",
     "jevqueue.static",
