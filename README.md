@@ -330,6 +330,22 @@ jevqueue/
 └── PRIVACY.md                what this plugin runs, sends and fetches
 ```
 
+## Documentation
+
+| | |
+|---|---|
+| [docs/install.md](docs/install.md) | **Install, enable, test** — every agent, and how to check it is working |
+| [docs/benefits.md](docs/benefits.md) | **What it buys the owner of the agent**, with measured token costs |
+| [docs/architecture.md](docs/architecture.md) | The two-tier split, the guard order, and why each guard sits where it does |
+| [docs/adapters.md](docs/adapters.md) | Writing a `Host` for a framework not listed here |
+| [docs/install-hermes.md](docs/install-hermes.md) | Copy-paste Hermes integration and how to keep merging upstream |
+| [docs/limits.md](docs/limits.md) | What this cannot do, and when not to use it |
+| [docs/comparison.md](docs/comparison.md) | Against a standard loop, and against other routing approaches |
+| [docs/local-decision-model.md](docs/local-decision-model.md) | The offline rules baseline: what it is, what it is not, and how to use it |
+| [docs/roadmap.md](docs/roadmap.md) | Possible improvements, with the reasoning for each |
+
+There is a full site at <https://iamvazghen.github.io/jevqueue/>.
+
 ## Development
 
 ```bash

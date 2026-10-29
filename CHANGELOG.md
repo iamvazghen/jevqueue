@@ -3,6 +3,48 @@
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versioning follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] — 2026-10-29
+
+The plugin now explains itself to the agent that is using it.
+
+### Added
+
+- **An awareness document, injected automatically.** A `SessionStart` hook (Claude Code,
+  Codex) and a `BeforeAgent` hook (Gemini) put a short document into the session at
+  start-up, so the agent knows the queue exists, when to ask it, and what to do when it says
+  no -- without anybody having to explain it. A plugin whose only artefact is a README has
+  already failed: the agent does not read READMEs, it reads what is in its context.
+- **`jevqueue/awareness.py`** -- the injected text, in two lengths. The short one is what goes
+  into a session and is kept under 2,500 characters on purpose, because it is paid for in
+  every conversation, including the ones where the queue has nothing to do.
+- **[docs/install.md](docs/install.md)** -- install, enable, test and "how it gets used", for
+  every agent in the matrix.
+- **[docs/benefits.md](docs/benefits.md)** -- what the *owner* of the agent gets, with
+  measured token numbers rather than assertions.
+- **Tests for both** -- the injected text and the documentation are pinned against each other,
+  so the two cannot quietly disagree.
+
+### Measured
+
+The token numbers in the documentation are measured, not asserted. On the benchmark's
+eight-tool corpus:
+
+| | Input | Output |
+|---|---|---|
+| A generative router choosing a tool | ~674 (schemas + state) | the reasoning tokens to emit a name |
+| **The decision layer** | **215** (state only) | **0** |
+| A step served from `static_tools` | — | **0** -- no model is called |
+
+The 460-token gap is the tool schemas: a generative router has to *receive* every tool
+definition to choose between them, while the decision layer scores criteria against them so
+they never enter the context. That gap grows with the size of the toolset.
+
+### Fixed
+
+- The README had lost its documentation index in the merge. Restored, with the new pages.
+
+[0.5.0]: https://github.com/iamvazghen/jevqueue/releases/tag/v0.5.0
+
 ## [0.4.0] — 2026-10-29
 
 The plugin stops being a Claude Code plugin and starts being a plugin for the CLI agent

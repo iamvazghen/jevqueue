@@ -13,6 +13,19 @@
           }
         ]
       }
+    ],
+    "BeforeAgent": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${extensionPath}${/}hooks${/}jevqueue_session.py\" || python \"${extensionPath}${/}hooks${/}jevqueue_session.py\"",
+            "name": "jevqueue-awareness",
+            "description": "Introduces the decision queue at the start of a session.",
+            "timeout": 10000
+          }
+        ]
+      }
     ]
   }
 }

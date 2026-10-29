@@ -36,6 +36,8 @@ theme:
 
 nav:
   - Home: index.md
+  - Install, enable, test: install.md
+  - What it buys the agent's owner: benefits.md
   - Architecture: architecture.md
   - Comparison: comparison.md
   - Limits: limits.md

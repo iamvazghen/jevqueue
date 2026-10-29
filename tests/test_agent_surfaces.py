@@ -114,7 +114,7 @@ class TestTheManifests:
 
     def test_the_gemini_hooks_are_only_in_the_gemini_file(self):
         hooks = json.loads(read("hooks/hooks.json"))
-        assert set(hooks["hooks"]) == {"BeforeTool"}
+        assert set(hooks["hooks"]) == {"BeforeTool", "BeforeAgent"}
 
     def test_the_gemini_hook_timeout_is_in_milliseconds(self):
         hooks = json.loads(read("hooks/hooks.json"))
