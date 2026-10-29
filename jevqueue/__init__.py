@@ -51,7 +51,7 @@ from .questions import CONTROL_OPTIONS, MAX_CRITERIA
 from .questions import build as build_questions
 from .state import project
 
-__version__ = "0.5.2"
+__version__ = "0.5.3"
 
 __all__ = [
     "CATASTROPHIC",

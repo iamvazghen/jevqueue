@@ -3,6 +3,24 @@
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versioning follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.3] — 2026-10-29
+
+The Qwen Code install command, which was wrong in a way that only showed up when
+something installed it for you.
+
+### Fixed
+
+- **`qwen extensions install https://github.com/iamvazghen/jevqueue` asks which plugin to
+  install.** When the URL points at a marketplace, Qwen Code opens a selection prompt, so
+  the command as written needed a human at the keyboard. Naming the plugin and passing
+  `--consent` installs it outright:
+  `qwen extensions install iamvazghen/jevqueue:jevqueue --consent`. The README and the
+  installation guide now give that command, and the end-to-end run uses it.
+- **The Gemini command was missing `--consent`**, which left the same prompt waiting for
+  an answer.
+
+[0.5.3]: https://github.com/iamvazghen/jevqueue/releases/tag/v0.5.3
+
 ## [0.5.2] — 2026-10-29
 
 The MCP server was shipped but never registered.

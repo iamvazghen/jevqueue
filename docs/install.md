@@ -35,14 +35,18 @@ codex plugin add jevqueue@jevqueue
 ### Gemini CLI and Qwen Code
 
 ```bash
-gemini extensions install https://github.com/iamvazghen/jevqueue
+gemini extensions install https://github.com/iamvazghen/jevqueue --consent
 ```
 
-Qwen Code uses the same format:
+Qwen Code takes the same format, but asks which plugin to install when the URL points at a
+marketplace, so name the plugin and pass `--consent`:
 
 ```bash
-qwen extensions install https://github.com/iamvazghen/jevqueue
+qwen extensions install iamvazghen/jevqueue:jevqueue --consent
 ```
+
+Both install from the published GitHub release, so a new version appears with
+`gemini extensions update jevqueue` rather than a reinstall.
 
 ### opencode
 
