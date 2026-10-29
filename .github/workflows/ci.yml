@@ -96,5 +96,20 @@ jobs:
       - name: Install the Claude Code CLI
         run: npm install -g @anthropic-ai/claude-code
 
-      - name: Validate the plugin and the marketplace
-        run: claude plugin validate --strict .
+      # Not --strict: the repository is two extensions at once, and `hooks/hooks.json` has to
+      # be in Gemini's dialect because that is the path Gemini CLI insists on for an
+      # extension. Claude Code reads that file too, finds an event it does not know, and
+      # reports one warning while ignoring the entry. The warning is the cost of the shared
+      # path; the hook Claude Code actually runs comes from hooks/claude-hooks.json.
+      - name: Validate the Claude Code plugin and the marketplace
+        run: claude plugin validate .
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install the Gemini CLI
+        run: npm install -g @google/gemini-cli
+
+      - name: Validate the Gemini extension
+        run: gemini extensions validate .

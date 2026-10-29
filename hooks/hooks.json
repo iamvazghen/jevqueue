@@ -1,28 +1,15 @@
 {
   "hooks": {
-    "UserPromptSubmit": [
+    "BeforeTool": [
       {
+        "matcher": ".*",
         "hooks": [
           {
             "type": "command",
-            "command": "command -v python3 >/dev/null 2>&1 && python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/jevqueue_prompt.py\" || exit 0",
-            "commandWindows": "if (Get-Command python -ErrorAction SilentlyContinue) { python \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\jevqueue_prompt.py\" }",
-            "timeout": 5,
-            "statusMessage": "Queueing the request..."
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "command -v python3 >/dev/null 2>&1 && python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/jevqueue_gate.py\" || exit 0",
-            "commandWindows": "if (Get-Command python -ErrorAction SilentlyContinue) { python \"$env:CLAUDE_PLUGIN_ROOT\\hooks\\jevqueue_gate.py\" }",
-            "timeout": 10,
-            "statusMessage": "Checking the queue..."
+            "command": "python3 \"${extensionPath}${/}hooks${/}jevqueue_gate.py\" || python \"${extensionPath}${/}hooks${/}jevqueue_gate.py\"",
+            "name": "jevqueue-gate",
+            "description": "Refuses a tool call the decision layer says should not run.",
+            "timeout": 10000
           }
         ]
       }

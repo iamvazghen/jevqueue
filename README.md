@@ -73,6 +73,52 @@ codex plugin marketplace add iamvazghen/jevqueue
 codex plugin add jevqueue@jevqueue
 ```
 
+### As an extension — Gemini CLI and Qwen Code
+
+```bash
+gemini extensions install https://github.com/iamvazghen/jevqueue
+```
+
+Qwen Code uses the same format: `qwen extensions install https://github.com/iamvazghen/jevqueue`.
+
+### As a plugin — opencode
+
+opencode reads `opencode.json` from your project, so add the plugin there:
+
+```json
+{ "plugin": ["https://github.com/iamvazghen/jevqueue"] }
+```
+
+### Everywhere else
+
+Cursor, Windsurf, Kiro, Cline, OpenClaw, GitHub Copilot and the `agents.md` standard all read
+a rules file, and this repository ships one for each — copy the one your agent looks for, or
+point it at the `jevqueue` skill. Every agent that speaks MCP gets the portable core as a
+tool called `jevqueue_decide`; the rules file tells the agent when to use it and what to do
+when it says no.
+
+### Where it runs, and what that buys you
+
+| Agent | Mechanism | What it gets |
+|---|---|---|
+| **Claude Code** | `PreToolUse` hook | The gate refuses the call before it runs |
+| **Codex CLI** | `PreToolUse` hook | The gate refuses the call before it runs |
+| **Gemini CLI** / **Qwen Code** | extension: MCP server, skills, `BeforeTool` hook | The queue is available to ask, and the hook is configured |
+| **opencode** | `tool.execute.before` plugin | The gate refuses the call before it runs |
+| **Cursor, Windsurf, Kiro, Cline, OpenClaw, Copilot** | rules file + `AGENTS.md` | The agent is told to ask the queue first |
+| **Any MCP agent** | `jevqueue_decide` tool | The agent can ask about any step before taking it |
+
+Two dialects, one decision layer: Claude Code and Codex speak `PreToolUse`, Gemini speaks
+`BeforeTool`, and the same gate script answers both. Where an agent has hooks, the refusal
+happens before the tool runs. Where it does not, the rules file makes the agent ask first.
+
+**One honest caveat.** Gemini CLI 0.45 loads an extension's hooks from `hooks/hooks.json` —
+the same path Claude Code uses — and the two dialects cannot both live in one file. The
+repository therefore keeps them apart: `hooks/claude-hooks.json` for Claude Code and Codex,
+`hooks/hooks.json` in Gemini's dialect. Claude Code still inspects `hooks/hooks.json`, finds
+an event it does not know, and reports one harmless warning while ignoring it; the hook Claude
+Code actually runs is the one its manifest declares.
+
 ### As a library — in the agent you are building
 
 ```bash

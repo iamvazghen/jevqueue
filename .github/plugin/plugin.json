@@ -1,0 +1,22 @@
+{
+  "name": "jevqueue",
+  "description": "A decision queue in front of your agent's tools. Before a tool runs, a decision model is asked whether it should, and the call is refused when the answer is no.",
+  "version": "0.4.0",
+  "author": {
+    "name": "Vazghen Vardanian",
+    "url": "https://github.com/iamvazghen"
+  },
+  "homepage": "https://github.com/iamvazghen/jevqueue",
+  "repository": "https://github.com/iamvazghen/jevqueue",
+  "license": "MIT",
+  "keywords": [
+    "agent-governance",
+    "agent-safety",
+    "decision-layer",
+    "guardrails",
+    "tool-calling"
+  ],
+  "commands": "commands/",
+  "skills": "skills/",
+  "hooks": "hooks/claude-hooks.json"
+}

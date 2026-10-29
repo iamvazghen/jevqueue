@@ -3,6 +3,45 @@
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versioning follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] — 2026-10-29
+
+The plugin stops being a Claude Code plugin and starts being a plugin for the CLI agent
+ecosystem.
+
+### Added
+
+- **A Gemini CLI extension** (`gemini-extension.json`): the MCP server, the skills, and a
+  `BeforeTool` hook in Gemini's dialect. Verified to install — the extension registers the
+  `jevqueue` MCP server and picks up both skills.
+- **An opencode plugin** (`.opencode/plugins/jevqueue.mjs`): opencode has no hook
+  configuration file, a plugin *is* the hook, so this one subscribes to
+  `tool.execute.before` and throws to refuse the call.
+- **Rules files for seven more agents** — Cursor, Windsurf, Kiro, Cline, OpenClaw, GitHub
+  Copilot and the `agents.md` standard — all generated from one body by
+  `scripts/sync_agent_rules.py`, so the guidance cannot drift between agents.
+- **A GitHub Copilot plugin** (`.github/plugin/`): its own marketplace and manifest, pointing
+  at the same commands, skills and hooks.
+- **Two hook dialects, two files.** Claude Code and Codex speak `PreToolUse`; Gemini speaks
+  `BeforeTool`; the same gate script answers both by looking at the event name it is given.
+- **The catastrophic floor now knows every runtime's shell tool** — `Bash`, `run_shell_command`,
+  `bash`, `run_terminal_cmd` and the rest — so a floor written for one agent is not a floor
+  that only works in one agent.
+- **A test per agent surface** (`tests/test_agent_surfaces.py`): every rules file, every
+  manifest, every dialect, and every shell-tool name, so a claim in the README cannot quietly
+  stop being true.
+
+### Changed
+
+- CI now validates against **both** ecosystems: `claude plugin validate` and
+  `gemini extensions validate`.
+
+### Known
+
+- Gemini CLI 0.45 does not load an extension's hooks from `settings.json`, and its
+  `hooks/hooks.json` path collides with Claude Code's. The dialects are therefore kept in
+  separate files, and Claude Code reports one harmless warning for the Gemini event it finds
+  in `hooks/hooks.json`. The hook Claude Code runs is the one its manifest declares.
+
 ## [0.3.0] — 2026-10-29
 
 The decision layer and the plugin are one project now.

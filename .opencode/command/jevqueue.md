@@ -1,0 +1,41 @@
+---
+description: Ask the decision queue whether a step should run
+agent: build
+---
+
+# jevqueue â€” a decision queue in front of your tools
+
+This agent may be governed by **jevqueue**. Before a risky or irreversible step, a decision
+model is asked whether it should run, and the call is refused when the answer is no.
+
+## What a refusal means
+
+A refused tool call is a decision, not an error. The reason says what was refused and why.
+
+- **Do not retry the same call.** A refusal means the step was wrong, not unlucky. If the
+  reason is that the step looks destructive, do not run it anyway â€” say what you wanted and
+  why, and let a human decide.
+- **If the reason is that the work looks done**, stop calling tools and write the answer.
+  Continuing to look for more work is the loop the gate exists to close.
+- **If the reason is that information is missing**, ask the user. That question is part of
+  the work, not a detour from it.
+
+## What an allowed call means
+
+Less than it looks like. The gate fails open: if the decision layer cannot be reached, tools
+run normally. An allowed call means nothing objected, not that the step was safe.
+
+## Asking the queue directly
+
+The `jevqueue_decide` tool answers the same question about any step:
+
+```
+jevqueue_decide(tool="Bash", input={"command": "rm -rf build/"})
+```
+
+It returns the verdict, the action, the confidence, the risk triage and the completion
+probability.
+
+## Where the full instructions live
+
+The `jevqueue` skill, and <https://github.com/iamvazghen/jevqueue>.

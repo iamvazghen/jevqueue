@@ -48,7 +48,33 @@ CATASTROPHIC: tuple[tuple[re.Pattern[str], str], ...] = (
 )
 
 #: Tools whose whole purpose is to run what the agent says, so the floor has to look inside.
-SHELL_TOOLS = frozenset({"Bash", "PowerShell", "Shell", "run_command", "execute_command"})
+#: The names differ per runtime -- Claude Code calls it `Bash`, Gemini CLI calls it
+#: `run_shell_command`, opencode calls it `bash`, Cursor calls it `run_terminal_cmd` -- and a
+#: floor that only knew one of them would be a floor that only worked in one agent.
+SHELL_TOOLS = frozenset(
+    {
+        # Claude Code, Codex
+        "Bash",
+        "PowerShell",
+        "Shell",
+        "ShellCommand",
+        # Gemini CLI
+        "run_shell_command",
+        "run_shell",
+        # opencode
+        "bash",
+        "zsh",
+        "sh",
+        # Cursor
+        "run_terminal_cmd",
+        # Aider, goose, and the usual suspects
+        "run_command",
+        "execute_command",
+        "exec_command",
+        "terminal",
+        "shell_command",
+    }
+)
 
 
 def check(tool_name: str, tool_input: dict) -> tuple[bool, str]:

@@ -1,0 +1,25 @@
+{
+  "name": "jevqueue",
+  "description": "A decision queue in front of your agent's tools. Refuses the tool calls a decision model says should not run.",
+  "owner": {
+    "name": "Vazghen Vardanian",
+    "url": "https://github.com/iamvazghen"
+  },
+  "plugins": [
+    {
+      "name": "jevqueue",
+      "description": "A decision layer for existing agents: a judgment model picks the tool, the provider is constrained to it and checked, and an independent goal_met question gates whether the agent may stop.",
+      "source": "./",
+      "category": "productivity",
+      "tags": [
+        "agent-governance",
+        "guardrails",
+        "decision-layer",
+        "tool-calling"
+      ],
+      "commands": "commands/",
+      "skills": "skills/",
+      "hooks": "hooks/claude-hooks.json"
+    }
+  ]
+}

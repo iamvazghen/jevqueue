@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "jevqueue"
-version = "0.3.0"
+version = "0.4.0"
 description = "A decision queue in front of your agent's tools: a decision model is asked whether a step should run, and the step is refused when the answer is no."
 readme = "README.md"
 requires-python = ">=3.10"
