@@ -27,8 +27,6 @@ jobs:
         with:
           enable-cache: true
 
-      # The package has no required dependencies, so the base install is enough for the
-      # offline engine. The extras are what the framework adapters need.
       - name: Install
         run: |
           uv venv --python ${{ matrix.python-version }}
@@ -41,12 +39,30 @@ jobs:
         run: uv run pytest -q
 
       - name: Lint
-        run: uv run ruff check jevqueue tests hooks mcp scripts
+        run: uv run ruff check jevqueue tests hooks mcp scripts examples bench
 
       - name: Types
         run: uv run mypy
 
-      - name: Import every module with no extras installed
+  bare-install:
+    # Its own job, in its own environment, on purpose. The check proves the package is usable
+    # with **no** optional extras installed -- and `langchain-core` pulls in `jsonschema`, so
+    # running it beside the adapter extras would prove nothing. An environment that has the
+    # extras cannot demonstrate the absence of them.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install the package and nothing else
+        run: |
+          uv venv --python 3.12
+          uv pip install -e .
+
+      - name: Prove every module imports and the unguarded paths refuse
         run: uv run python scripts/check_bare_install.py
 
   build:
