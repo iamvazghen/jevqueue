@@ -1,0 +1,62 @@
+site_name: jevqueue
+site_description: >-
+  A decision queue in front of your agent's tools. Typed, gated, verified routing.
+site_url: https://iamvazghen.github.io/jevqueue/
+repo_url: https://github.com/iamvazghen/jevqueue
+repo_name: iamvazghen/jevqueue
+edit_uri: edit/main/docs/
+copyright: MIT licensed. Independent community project.
+
+# The site is built from generated sources, so the README and the docs pages cannot drift
+# from what the site shows. `scripts/build_docs_index.py` writes them.
+docs_dir: site_src
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - search.highlight
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: black
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+nav:
+  - Home: index.md
+  - Architecture: architecture.md
+  - Comparison: comparison.md
+  - Limits: limits.md
+  - The offline decision model: local-decision-model.md
+  - Writing an adapter: adapters.md
+  - Installing into Hermes: install-hermes.md
+  - The decision layer: decision-layer.md
+  - Decision layer changelog: decision-layer-changelog.md
+  - Roadmap: roadmap.md
+  - Ecosystem submissions: ecosystem-submissions.md
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/iamvazghen/jevqueue

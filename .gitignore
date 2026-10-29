@@ -7,6 +7,8 @@ venv/
 .ruff_cache/
 dist/
 build/
+site/
+site_src/
 *.egg-info/
 .coverage
 htmlcov/

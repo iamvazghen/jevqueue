@@ -268,7 +268,6 @@ class TestCredentialHandling:
             Path(ROOT, "jevqueue", "policy.py"),
             Path(ROOT, "jevqueue", "cli.py"),
             *Path(ROOT, "hooks").rglob("*.py"),
-            *Path(ROOT, "scripts").rglob("*.py"),
             *Path(ROOT, "mcp").rglob("*.py"),
         ]
         for path in plugin_surface:

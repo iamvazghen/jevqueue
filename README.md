@@ -2,6 +2,12 @@
 
 **A decision queue in front of your agent's tools.**
 
+[![CI](https://github.com/iamvazghen/jevqueue/actions/workflows/ci.yml/badge.svg)](https://github.com/iamvazghen/jevqueue/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/jevqueue.svg)](https://pypi.org/project/jevqueue/)
+[![Python](https://img.shields.io/pypi/pyversions/jevqueue.svg)](https://pypi.org/project/jevqueue/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/iamvazghen/jevqueue.svg)](https://github.com/iamvazghen/jevqueue/releases/latest)
+
 Your agent picks a tool. Before it runs, jevqueue asks a decision model whether it should —
 and refuses the call when the answer is no.
 
