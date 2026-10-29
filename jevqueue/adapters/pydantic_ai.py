@@ -50,7 +50,7 @@ def _require_pydantic_ai() -> None:
     if not _AVAILABLE:
         raise JevError(
             "The Pydantic AI adapter needs pydantic-ai "
-            "(pip install 'jevqueue[pydantic-ai]')"
+            '(pip install "jevqueue[pydantic-ai] @ git+https://github.com/iamvazghen/jevqueue.git")'
         )
 
 

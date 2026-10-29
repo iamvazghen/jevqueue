@@ -3,6 +3,41 @@
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versioning follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.1] — 2026-10-29
+
+The distribution stops pretending to be on PyPI, and the license says exactly what it covers.
+
+### Fixed
+
+- **The project pointed at a PyPI package that does not exist.** There is no PyPI project —
+  nothing was ever published, and the publish workflow was removed when the plugin stopped
+  needing an install step. The README's badges, the install one-liners in the README and five
+  documentation pages, the demo's own docstring, and the three adapter error messages all
+  said `pip install jevqueue`, which fails. They now say
+  `pip install "jevqueue @ git+https://github.com/iamvazghen/jevqueue.git"`, which works.
+- **The manifest versions had drifted.** The GitHub Copilot manifest said `0.4.0` and the
+  Gemini extension said `0.3.0` while everything else said `0.5.0`. The manifests are the
+  plugin's public contract, and a version is the first thing a reader checks, so all of them
+  now agree — and a test holds them there.
+- **The changelog claimed a release workflow that did not exist.** Two entries described a
+  PyPI Trusted Publishing workflow as though it shipped. It never ran, and it is gone.
+
+### Changed
+
+- **The license statement is precise.** MIT covers everything in this repository: the decision
+  layer, the gate, the hook scripts, the manifests, the skills, the MCP server and the docs.
+  No third-party code is vendored, and the package has no required dependencies. The hosted
+  *Jev* model is a separately hosted service under TypeSafe's terms — not distributed here,
+  with no weights, keys or credits — and the offline rules baseline that *is* here is covered
+  by the MIT license.
+
+### Added
+
+- A test that every manifest version matches the package version, and that no document
+  anywhere in the project contains a `pip install jevqueue` that cannot work.
+
+[0.5.1]: https://github.com/iamvazghen/jevqueue/releases/tag/v0.5.1
+
 ## [0.5.0] — 2026-10-29
 
 The plugin now explains itself to the agent that is using it.
@@ -105,8 +140,8 @@ The decision layer and the plugin are one project now.
   only when it is unavailable: a decision model that shrugs at `rm -rf /` should not overrule
   a list that short, and when the decision layer cannot be reached the floor is all that is
   left standing.
-- **The command line moved into the package** (`jevqueue.cli`), so `pip install jevqueue`
-  gives you `jevqueue` on your `PATH`.
+- **The command line moved into the package** (`jevqueue.cli`), so installing `jevqueue` from
+  the repository gives you `jevqueue` on your `PATH`.
 
 ### Added
 
@@ -133,7 +168,9 @@ Public availability in both ecosystems.
 
 ### Added
 
-- A release workflow with PyPI Trusted Publishing, so publishing needs no stored token.
+- A release workflow with PyPI Trusted Publishing, so publishing would need no stored token.
+  It never ran — the package was never published — and the workflow was removed in 0.5.1,
+  when distribution moved to the repository itself.
 - `PRIVACY.md` and `NOTICE`: what the plugin runs, reads, sends, fetches and writes, and the
   attribution.
 - A `userConfig` entry for the API key, marked `sensitive`.

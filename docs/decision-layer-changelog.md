@@ -3,6 +3,23 @@
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versioning follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.1] — 2026-10-29
+
+The distribution stops pretending to be on PyPI.
+
+### Changed
+
+- **The package is installed from the repository.** There is no PyPI project, so
+  `pip install "jevqueue @ git+https://github.com/iamvazghen/jevqueue.git"` is the command,
+  and every document, error message and install hint in the project now says so. The badges
+  and the install one-liners pointed at a package that was never published, which is a
+  broken promise rather than a shortcut.
+- **The PyPI publish workflow is gone.** Nothing was ever published, and the plugin does not
+  need an install step to work, so the workflow was removed rather than fixed.
+- **The license statement is precise.** MIT covers everything in the repository. The hosted
+  *Jev* model is a separately hosted service under TypeSafe's terms, is not distributed here,
+  and no third-party code is vendored.
+
 ## [0.2.0] — 2026-10-27
 
 The release that makes the package reachable and runnable. Two of the changes are about
@@ -24,8 +41,8 @@ decision model that needs no account.
 - **A LangChain adapter** (`adapters/langchain.py`) — `GovernedChatModel`, a chat-model
   wrapper. `bind_tools` binds to the governed model rather than to the provider, so the
   governor stays in the loop; a named `tool_choice` is then applied as a provider-level
-  constraint and verified. Tested against a real `BaseChatModel`. Install with
-  `jevqueue[langchain]`.
+  constraint and verified. Tested against a real `BaseChatModel`. Install with the
+  `langchain` extra (`jevqueue[langchain]`).
 - **`python -m jevqueue`** — the demo, with no key, no network and no provider: the
   provider constrained to the selected tool, a provider that ignores the constraint refused
   before anything executes, and a destructive tool stopped at the risk gate.
@@ -34,8 +51,9 @@ decision model that needs no account.
   distribution. A published run of the offline baseline is committed at
   `bench/results/local-rules-baseline.json`. The point is the harness rather than the
   number: it is how two decision models get compared on your traffic.
-- **A PyPI release workflow** using Trusted Publishing, so a version reaches PyPI without a
-  stored API token. Publishing a GitHub Release is the trigger.
+- **A release workflow** with PyPI Trusted Publishing, so publishing would need no stored
+  token. It never ran: the package was never published, and the publish workflow was removed
+  in 0.5.1 when distribution moved to the repository itself.
 - **A documentation site** — MkDocs configuration, a `Pages` workflow, and a script that
   generates the site home page from the README so the two cannot drift apart.
 - **An agent skill** (`skills/jev-decision-layer-adapter/`) — the Host protocol, the four
@@ -60,7 +78,8 @@ decision model that needs no account.
 
 - The package was never published. CI built a wheel and uploaded it as an artifact, with no
   publish job and no release trigger, so `pip install jevqueue` failed with "no matching
-  distribution found" — the README's very first command. The release workflow above fixes it.
+  distribution found" — the README's very first command. The install now names the
+  repository, which is what actually works.
 - The LangChain and Pydantic AI adapter tests were **skipped in CI**, because the frameworks
   were not in the development extras. They are now installed in CI, so both adapters are
   tested against the real frameworks rather than only by their author.

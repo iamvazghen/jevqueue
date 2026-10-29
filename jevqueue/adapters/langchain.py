@@ -61,7 +61,7 @@ def _require_langchain() -> None:
     if not _AVAILABLE:
         raise JevError(
             "The LangChain adapter needs langchain-core "
-            "(pip install 'jevqueue[langchain]')"
+            '(pip install "jevqueue[langchain] @ git+https://github.com/iamvazghen/jevqueue.git")'
         )
 
 

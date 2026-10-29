@@ -35,9 +35,9 @@ The kind is `SDK` because the row points at a client library you install. The pr
 number. There is no `⭐` — that marker is reserved for official documentation.
 
 **Before submitting:** the directory's bar is *"could a reader act on this row with what is
-here?"* They can `pip install jevqueue` and run `python -m jevqueue` with no
-credential, so the row should say so. If that one-liner is not in the README when the PR is
-opened, add it to the description line.
+here?"* They can `pip install "jevqueue @ git+https://github.com/iamvazghen/jevqueue.git"` and
+run `python -m jevqueue` with no credential, so the row should say so. If that one-liner is not
+in the README when the PR is opened, add it to the description line.
 
 ---
 

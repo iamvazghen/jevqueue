@@ -1,6 +1,6 @@
 {
   "name": "jevqueue",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "A decision queue in front of your agent's tools. Before a tool runs, a decision model is asked whether it should, and the call is refused when the answer is no.",
   "license": "MIT",
   "author": "Vazghen Vardanian",

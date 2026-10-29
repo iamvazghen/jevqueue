@@ -20,9 +20,11 @@ and the only thing you maintain is the seam below.
 ## Step 1 — install
 
 ```bash
-pip install jevqueue
-pip install "jevqueue[static]"   # only if you want static_tools
+pip install "jevqueue @ git+https://github.com/iamvazghen/jevqueue.git"
+pip install "jevqueue[static] @ git+https://github.com/iamvazghen/jevqueue.git"   # only if you want static_tools
 ```
+
+The package is not on PyPI, so the install names the repository.
 
 ## Step 2 — the seam in `agent/turn_api_call.py`
 

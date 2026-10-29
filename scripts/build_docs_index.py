@@ -59,6 +59,18 @@ def main() -> int:
         print(f"missing {README}", file=sys.stderr)
         return 1
 
+    # The home page comes from the README. A copy of it living in ``docs/`` would be a
+    # second source of truth that drifts the moment either one is edited, and it would
+    # shadow the README-generated page. There is one home page, and it is generated.
+    stale = DOCS / "index.md"
+    if stale.exists():
+        print(
+            f"{stale} would shadow the README-generated home page. Delete it -- "
+            "the README is the source of truth.",
+            file=sys.stderr,
+        )
+        return 1
+
     SITE.mkdir(parents=True, exist_ok=True)
     written = []
 
@@ -67,8 +79,6 @@ def main() -> int:
     written.append(index.name)
 
     for page in sorted(DOCS.glob("*.md")):
-        if page.name == "index.md":
-            continue
         target = SITE / page.name
         target.write_text(rewrite(page.read_text(encoding="utf-8")), encoding="utf-8")
         written.append(target.name)

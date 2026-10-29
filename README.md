@@ -3,8 +3,7 @@
 **A decision queue in front of your agent's tools.**
 
 [![CI](https://github.com/iamvazghen/jevqueue/actions/workflows/ci.yml/badge.svg)](https://github.com/iamvazghen/jevqueue/actions/workflows/ci.yml)
-[![PyPI](https://img.shields.io/pypi/v/jevqueue.svg)](https://pypi.org/project/jevqueue/)
-[![Python](https://img.shields.io/pypi/pyversions/jevqueue.svg)](https://pypi.org/project/jevqueue/)
+[![Docs](https://img.shields.io/badge/docs-iamvazghen.github.io%2Fjevqueue-blue)](https://iamvazghen.github.io/jevqueue/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/iamvazghen/jevqueue.svg)](https://github.com/iamvazghen/jevqueue/releases/latest)
 
@@ -122,11 +121,18 @@ Code actually runs is the one its manifest declares.
 ### As a library — in the agent you are building
 
 ```bash
-pip install jevqueue
+pip install "jevqueue @ git+https://github.com/iamvazghen/jevqueue.git"
 ```
 
-No dependencies. `httpx` is needed only for the hosted decision model, and is an extra:
-`pip install "jevqueue[hosted]"`.
+The package is **not on PyPI**, so the install names the repository. There are no required
+dependencies. `httpx` is needed only for the hosted decision model, and is an extra:
+
+```bash
+pip install "jevqueue[hosted] @ git+https://github.com/iamvazghen/jevqueue.git"
+```
+
+If you would rather work from a checkout, `pip install -e .` does the same thing without the
+network round-trip.
 
 ```python
 from jevqueue import Governor, JevClient
@@ -356,14 +362,26 @@ uv run mypy
 claude plugin validate --strict .
 ```
 
-251 tests, offline: no network, no API key, no provider. A test that needs a credential does
+361 tests, offline: no network, no API key, no provider. A test that needs a credential does
 not run, and one that does not run is decoration.
 
 ## License
 
-[MIT](LICENSE). See [NOTICE](NOTICE) for attribution and [PRIVACY.md](PRIVACY.md) for data
-handling.
+**[MIT](LICENSE)**, and it covers everything in this repository: the decision layer, the gate,
+the hook scripts, the plugin manifests, the skills, the MCP server and the documentation.
+Copyright (c) 2026 Vazghen Vardanian.
+
+**No third-party code is vendored.** The package has no required dependencies — the decision
+layer is pure standard library — and `httpx`, needed only for the hosted decision model, is an
+optional extra. [NOTICE](NOTICE) carries the attribution.
+
+**The hosted model is not part of this license.** *Jev* is TypeSafe's System One model, a
+separately hosted service reached over the network at `api.typesafe.ai`. It is not distributed
+here: this repository ships no model weights, no API keys and no usage credits, and using that
+service is subject to [TypeSafe's terms](https://docs.typesafe.ai/legal). Everything that *is*
+in this repository — including the offline rules baseline, which needs no account and makes no
+network request at all — is covered by the MIT license above.
 
 `jevqueue` is an independent community project. It is not affiliated with, endorsed by, or
-supported by TypeSafe AI or Nous Research. **Jev** and **TypeSafe** are names of a separately
-hosted service; use of that service is subject to [TypeSafe's terms](https://docs.typesafe.ai/legal).
+supported by TypeSafe AI or Nous Research. [PRIVACY.md](PRIVACY.md) documents what the plugin
+runs, reads, sends and writes.

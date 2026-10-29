@@ -5,7 +5,7 @@ This module is the payload of ``python -m jevqueue``. It exists so that the clai
 
 .. code-block:: console
 
-    $ pip install jevqueue
+    $ pip install "jevqueue @ git+https://github.com/iamvazghen/jevqueue.git"
     $ python -m jevqueue
 
 The decision is made by :class:`~jevqueue.local.LocalDecisionModel`, the offline rules

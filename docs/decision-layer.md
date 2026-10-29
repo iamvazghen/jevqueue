@@ -230,10 +230,11 @@ rest are why it is worth the dependency.
 ## Install
 
 ```bash
-pip install jevqueue                      # core: one dependency (httpx)
-pip install "jevqueue[pydantic-ai]"       # the model-wrapper adapter
-pip install "jevqueue[langchain]"         # the chat-model wrapper
-pip install "jevqueue[static]"            # validated zero-cost static tool payloads
+# The package is not on PyPI, so every install names the repository.
+pip install "jevqueue @ git+https://github.com/iamvazghen/jevqueue.git"                # core: no dependencies
+pip install "jevqueue[pydantic-ai] @ git+https://github.com/iamvazghen/jevqueue.git" # the model-wrapper adapter
+pip install "jevqueue[langchain] @ git+https://github.com/iamvazghen/jevqueue.git"   # the chat-model wrapper
+pip install "jevqueue[static] @ git+https://github.com/iamvazghen/jevqueue.git"      # validated zero-cost static tool payloads
 ```
 
 You need a TypeSafe API key in `TYPESAFE_API_KEY` to use the hosted decision model. Get one at
@@ -268,7 +269,7 @@ is refused before it executes — is in [`examples/local_first.py`](examples/loc
 Or run it with no code at all:
 
 ```bash
-pip install jevqueue
+pip install "jevqueue @ git+https://github.com/iamvazghen/jevqueue.git"
 python -m jevqueue
 ```
 

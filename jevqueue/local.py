@@ -4,9 +4,9 @@
 described in ``docs/comparison.md`` -- "hand-written rules or a classifier you train" -- built
 into the package so that three things are possible without an account, a key, or a network:
 
-1. The package is installable and runnable end to end the moment it lands from PyPI. A visitor
-   can execute a governed loop, see the constraint applied, and see the provider-ignored case
-   raise, before deciding whether this is worth a credential.
+1. The package is installable and runnable end to end the moment it lands from the
+   repository. A visitor can execute a governed loop, see the constraint applied, and see
+   the provider-ignored case raise, before deciding whether this is worth a credential.
 2. The enforcement machinery -- the part of this package that is actually unusual -- can be
    demonstrated and tested without a hosted service standing behind it. The constraint, the
    verification, the refusal to execute an unselected tool: none of that needs a model.

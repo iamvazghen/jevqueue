@@ -1,9 +1,10 @@
 """The packaging metadata has to agree with the code, and the docs have to build.
 
-Both of these fail silently. A version that says one thing on PyPI and another in
+All of these fail silently. A version that says one thing in a manifest and another in
 ``jevqueue.__version__`` is the kind of thing nobody notices until a bug report arrives
 with the wrong version in it. A documentation link that points nowhere is the kind of thing
-nobody notices until a reader gives up.
+nobody notices until a reader gives up. An install command for a package that was never
+published is the kind of thing nobody notices until somebody tries it.
 
 No TOML parser is used here on purpose: ``tomllib`` only exists from Python 3.11, and this
 package supports 3.10.
@@ -12,8 +13,11 @@ package supports 3.10.
 from __future__ import annotations
 
 import importlib.util
+import json
+import os
 import re
 from pathlib import Path
+from typing import ClassVar
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -46,9 +50,104 @@ class TestTheVersion:
 
         assert f"## [{_project_field('version')}]" in changelog
 
-    def test_the_readme_points_at_the_pypi_project(self):
+    def test_the_readme_does_not_point_at_a_pypi_project(self):
+        """There is no PyPI project, and there never was one.
+
+        A link to a package that does not exist is not a shortcut -- it is a broken promise
+        printed at the top of the README, and the reader finds out at the install step.
+        """
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
-        assert "pypi.org/project/jevqueue" in readme
+
+        assert "pypi.org/project/jevqueue" not in readme
+        assert "img.shields.io/pypi" not in readme
+
+    def test_the_readme_says_how_to_install_the_library(self):
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+
+        assert 'pip install "jevqueue @ git+https://github.com/iamvazghen/jevqueue.git"' in readme
+
+    def test_every_manifest_version_is_the_package_version(self):
+        """The manifests are the plugin's public contract, and the version is the first
+        thing a reader checks.
+
+        The GitHub Copilot manifest and the Gemini extension both drifted a release or two
+        behind without anybody noticing, because nothing held them to the package version.
+        """
+        version = _project_field("version")
+        manifests = [
+            ".claude-plugin/plugin.json",
+            ".codex-plugin/plugin.json",
+            ".github/plugin/plugin.json",
+            "gemini-extension.json",
+            "package.json",
+        ]
+
+        for name in manifests:
+            data = json.loads((ROOT / name).read_text(encoding="utf-8"))
+            assert data["version"] == version, (
+                f"{name} says {data['version']}, the package says {version}"
+            )
+
+
+class TestTheInstallCommands:
+    """Every install command in the project has to work.
+
+    The package is not on PyPI, so an install that names only ``jevqueue`` is an install
+    that fails -- in the README, in a documentation page, and in the error message a
+    developer sees when an adapter's extra is missing.
+
+    The scan covers everything that can reach a reader. ``tests/`` is excluded because it
+    is not shipped, and because this file is the checker: it necessarily contains the
+    strings it looks for.
+    """
+
+    #: Where an install command can live.
+    SUFFIXES: ClassVar[tuple[str, ...]] = (".md", ".py")
+
+    #: The repository the package is installed from.
+    REPOSITORY: ClassVar[str] = "git+https://github.com/iamvazghen/jevqueue.git"
+
+    #: Changelogs record what happened, including commands that did not work at the time.
+    EXEMPT: ClassVar[frozenset[str]] = frozenset(
+        {"CHANGELOG.md", "decision-layer-changelog.md"}
+    )
+
+    #: Directories that are not shipped, so nothing in them reaches a reader.
+    UNSHIPPED: ClassVar[frozenset[str]] = frozenset(
+        {".git", ".venv", "site", "site_src", "dist", "node_modules", "__pycache__", "tests"}
+    )
+
+    def _sources(self) -> list[Path]:
+        sources: list[Path] = []
+        for dirpath, dirnames, filenames in os.walk(ROOT):
+            dirnames[:] = [name for name in dirnames if name not in self.UNSHIPPED]
+            for name in filenames:
+                if not name.endswith(self.SUFFIXES) or name in self.EXEMPT:
+                    continue
+                sources.append(Path(dirpath) / name)
+        return sources
+
+    def test_no_install_command_omits_the_repository(self):
+        offenders = []
+        for path in self._sources():
+            text = path.read_text(encoding="utf-8")
+            for line in text.splitlines():
+                if "pip install" not in line or "jevqueue" not in line:
+                    continue
+                if self.REPOSITORY in line:
+                    continue
+                offenders.append(f"{path.relative_to(ROOT)}: {line.strip()}")
+
+        assert offenders == [], "install commands that cannot work:\n" + "\n".join(offenders)
+
+    def test_the_documentation_does_not_point_at_a_pypi_project(self):
+        offenders = []
+        for path in self._sources():
+            text = path.read_text(encoding="utf-8")
+            if "pypi.org/project/jevqueue" in text or "img.shields.io/pypi" in text:
+                offenders.append(str(path.relative_to(ROOT)))
+
+        assert offenders == [], f"pages still pointing at a PyPI project: {offenders}"
 
 
 class TestTheDocumentationIndex:

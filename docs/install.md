@@ -91,11 +91,15 @@ Point your agent's MCP configuration at it and it gains `jevqueue_decide`.
 ### As a library, inside the agent you are building
 
 ```bash
-pip install jevqueue
+pip install "jevqueue @ git+https://github.com/iamvazghen/jevqueue.git"
 ```
 
-No required dependencies. `httpx` is needed only for the hosted decision model and comes with
-the `hosted` extra.
+The package is **not on PyPI**, so the install names the repository. No required dependencies.
+`httpx` is needed only for the hosted decision model and comes with the `hosted` extra:
+
+```bash
+pip install "jevqueue[hosted] @ git+https://github.com/iamvazghen/jevqueue.git"
+```
 
 ## Enable it
 
@@ -136,7 +140,7 @@ agent can act on.
 ### The quick check
 
 ```bash
-pip install jevqueue
+pip install "jevqueue @ git+https://github.com/iamvazghen/jevqueue.git"
 python -m jevqueue
 ```
 

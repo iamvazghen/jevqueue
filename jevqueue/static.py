@@ -52,7 +52,8 @@ def validate_static_arguments(tools: list[dict], name: str, arguments: Any) -> N
     except ImportError:
         raise JevError(
             "Static tool execution needs the jsonschema extra "
-            "(pip install 'jevqueue[static]'); use dynamic arguments instead"
+            '(pip install "jevqueue[static] @ git+https://github.com/iamvazghen/jevqueue.git"); '
+            "use dynamic arguments instead"
         ) from None
 
     # Checked on the serialized schema so a `$ref` nested at any depth is caught.
