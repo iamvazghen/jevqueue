@@ -3,6 +3,33 @@
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versioning follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.2] — 2026-10-29
+
+The MCP server was shipped but never registered.
+
+### Fixed
+
+- **Claude Code, Codex and GitHub Copilot never saw `jevqueue_decide`.** The plugin shipped
+  `mcp/jevqueue_mcp.py`, and the awareness document injected into every session told the
+  agent to call `jevqueue_decide` — but no manifest declared the server, so the tool did
+  not exist. The agent was told to ask a question it could not ask. The manifests now
+  declare it, and `.mcp.json` at the plugin root registers it automatically.
+- **A launcher, because one command has to work on three platforms.** The decision layer
+  is Python and the agents that speak MCP are Node programs; `python` and `python3` are
+  not the same interpreter, and on macOS `python` may not exist at all. `bin/jevqueue-mcp.mjs`
+  finds an interpreter that is actually there and hands the process over, inheriting stdio
+  so the JSON-RPC framing is untouched.
+- **Codex gets its own configuration file.** Its legacy plugin parser resolves a relative
+  `cwd` against the plugin root but does not expand placeholders in MCP arguments, so a
+  single shared file would have handed it a path that cannot exist.
+
+### Added
+
+- A test that the awareness document names the tool the MCP server actually exposes, and
+  that every manifest which should carry an MCP server does.
+
+[0.5.2]: https://github.com/iamvazghen/jevqueue/releases/tag/v0.5.2
+
 ## [0.5.1] — 2026-10-29
 
 The distribution stops pretending to be on PyPI, and the license says exactly what it covers.

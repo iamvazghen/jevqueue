@@ -16,8 +16,12 @@ import importlib.util
 import json
 import os
 import re
+import shutil
+import subprocess
 from pathlib import Path
 from typing import ClassVar
+
+import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -148,6 +152,76 @@ class TestTheInstallCommands:
                 offenders.append(str(path.relative_to(ROOT)))
 
         assert offenders == [], f"pages still pointing at a PyPI project: {offenders}"
+
+
+class TestTheMcpWiring:
+    """The MCP server has to be *registered*, not merely shipped.
+
+    The awareness document tells every agent that it can ask ``jevqueue_decide``. If the
+    plugin does not declare the server, that instruction points at a tool that does not
+    exist -- which is worse than saying nothing, because the agent will try to call it.
+    """
+
+    def test_the_claude_manifest_declares_the_mcp_server(self):
+        manifest = json.loads((ROOT / ".claude-plugin" / "plugin.json").read_text(encoding="utf-8"))
+
+        assert manifest["mcpServers"] == "./.mcp.json"
+
+    def test_the_mcp_configuration_names_the_launcher(self):
+        config = json.loads((ROOT / ".mcp.json").read_text(encoding="utf-8"))
+
+        server = config["mcpServers"]["jevqueue"]
+        assert server["command"] == "node"
+        assert any("jevqueue-mcp.mjs" in argument for argument in server["args"])
+
+    def test_the_launcher_is_shipped(self):
+        assert (ROOT / "bin" / "jevqueue-mcp.mjs").is_file()
+
+    def test_the_codex_manifest_declares_its_own_mcp_configuration(self):
+        """Codex's legacy plugin parser does not expand placeholders in MCP arguments,
+        so it gets a configuration that resolves the path through the working directory
+        instead. One file cannot satisfy both parsers, and a half-expanded path is a
+        server that never starts.
+        """
+        manifest = json.loads((ROOT / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
+        assert manifest["mcpServers"] == "./.codex-plugin/mcp.json"
+
+        config = json.loads((ROOT / ".codex-plugin" / "mcp.json").read_text(encoding="utf-8"))
+        server = config["mcpServers"]["jevqueue"]
+        assert server["cwd"] == "."
+        assert server["args"] == ["bin/jevqueue-mcp.mjs"]
+
+    def test_the_copilot_manifest_declares_the_mcp_server(self):
+        manifest = json.loads(
+            (ROOT / ".github" / "plugin" / "plugin.json").read_text(encoding="utf-8")
+        )
+
+        assert manifest["mcpServers"] == "./.mcp.json"
+
+    def test_the_launcher_is_valid_javascript(self):
+        node = shutil.which("node")
+        if node is None:
+            pytest.skip("node is not installed here, so the launcher cannot be parsed")
+
+        result = subprocess.run(
+            [node, "--check", str(ROOT / "bin" / "jevqueue-mcp.mjs")],
+            capture_output=True,
+            text=True,
+        )
+
+        assert result.returncode == 0, result.stderr
+
+    def test_the_awareness_document_names_the_tool_the_server_exposes(self):
+        """The agent is told to call one tool by name. That name has to be the one the
+        server actually exposes, or the instruction is a dead end.
+        """
+        from jevqueue.awareness import SHORT_AWARENESS
+
+        server = (ROOT / "mcp" / "jevqueue_mcp.py").read_text(encoding="utf-8")
+        match = re.search(r'"name":\s*"([a-z_]+)"', server)
+
+        assert match is not None, "the MCP server declares no tool name"
+        assert match.group(1) in SHORT_AWARENESS
 
 
 class TestTheDocumentationIndex:

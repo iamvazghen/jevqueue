@@ -1,6 +1,6 @@
 {
   "name": "jevqueue",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "A decision queue in front of your agent's tools. Before a tool runs, a decision model is asked whether it should, and the call is refused when the answer is no.",
   "author": {
     "name": "Vazghen Vardanian",
@@ -24,6 +24,7 @@
   "skills": "./skills/",
   "commands": "./commands/",
   "hooks": "./hooks/claude-hooks.json",
+  "mcpServers": "./.codex-plugin/mcp.json",
   "interface": {
     "displayName": "Jevqueue",
     "shortDescription": "A decision queue in front of your agent's tools",

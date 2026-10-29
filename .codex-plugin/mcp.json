@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "jevqueue": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["bin/jevqueue-mcp.mjs"],
+      "cwd": "."
+    }
+  }
+}

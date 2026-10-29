@@ -93,7 +93,8 @@ opencode reads `opencode.json` from your project, so add the plugin there:
 Cursor, Windsurf, Kiro, Cline, OpenClaw, GitHub Copilot and the `agents.md` standard all read
 a rules file, and this repository ships one for each — copy the one your agent looks for, or
 point it at the `jevqueue` skill. Every agent that speaks MCP gets the portable core as a
-tool called `jevqueue_decide`; the rules file tells the agent when to use it and what to do
+tool called `jevqueue_decide` — registered for you by Claude Code, Codex and GitHub Copilot
+when the plugin installs — and the rules file tells the agent when to use it and what to do
 when it says no.
 
 ### Where it runs, and what that buys you
@@ -150,12 +151,18 @@ agent's skills directory and they work on their own, with no hooks and no setup.
 
 ### As an MCP server — any MCP-capable agent
 
+Claude Code, Codex and GitHub Copilot register the server themselves when you install the
+plugin; there is nothing to configure. For any other MCP-capable agent, expose it by hand:
+
 ```bash
 python mcp/jevqueue_mcp.py
 ```
 
-Expose that to your agent as an MCP server and it gains one tool, `jevqueue_decide`, which
-answers the same question the hook answers.
+Either way the agent gains one tool, `jevqueue_decide`, which answers the same question the
+hook answers. The plugin launches the server through `bin/jevqueue-mcp.mjs`, which finds a
+Python interpreter — `python3`, `python` or `py -3`, whichever is actually there — and hands
+the process over, because `python` and `python3` are not the same interpreter and on macOS
+`python` may not exist at all.
 
 ---
 
@@ -330,8 +337,9 @@ jevqueue/
 ├── commands/                 /jevqueue:setup, /jevqueue:check, /jevqueue:status
 ├── skills/                   the portable core: jevqueue, jevqueue-adapter
 ├── mcp/jevqueue_mcp.py       the portable core as an MCP server
+├── .mcp.json                 registers that server with the plugin
 ├── scripts/                  the bare-import check, the icon, the CLI shim
-├── bin/                      shims so `jevqueue` is on PATH
+├── bin/                      shims so `jevqueue` is on PATH, and the MCP launcher
 ├── docs/                     architecture, limits, comparison, adapters, roadmap
 └── PRIVACY.md                what this plugin runs, sends and fetches
 ```
@@ -362,7 +370,7 @@ uv run mypy
 claude plugin validate --strict .
 ```
 
-361 tests, offline: no network, no API key, no provider. A test that needs a credential does
+368 tests, offline: no network, no API key, no provider. A test that needs a credential does
 not run, and one that does not run is decoration.
 
 ## License

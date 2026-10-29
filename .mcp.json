@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "jevqueue": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/bin/jevqueue-mcp.mjs"]
+    }
+  }
+}
